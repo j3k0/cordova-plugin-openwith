@@ -1,6 +1,6 @@
-# Cordova plugin open-with
+# cordova-plugin-openwith
 
-![Logo Fovea](https://fovea.cc/blog/wp-content/uploads/2017/09/fovea-logo-flat-128.png) ![Logo InteractiveTools](https://www.interactivetools.com/assets/images/header/logo.png)
+<a href="https://fovea.cc"><img alt="Logo Fovea" src="https://fovea.cc/blog/wp-content/uploads/2017/09/fovea-logo-flat-128.png" height="59" /></a> &amp; <a href="https://www.interactivetools.com"><img alt="Logo InteractiveTools" src="https://www.interactivetools.com/assets/images/header/logo.png" height="59" /></a>
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
