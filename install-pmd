@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Version of PMD to install
+VERSION=5.8.1
+
+set -e
+COPYWD="$PWD"
+cd "`dirname $0`"
+INSTALL_DIR=$PWD/node_modules/pmd-bin-$VERSION
+BIN_DIR=$PWD/node_modules/.bin
+
+if test -e $INSTALL_DIR; then
+  # echo "PMD version $VERSION is already installed"
+  exit 0
+fi
+
+echo "Intalling PMD version $VERSION into node_modules"
+
+curl -OL https://github.com/pmd/pmd/releases/download/pmd_releases%2F$VERSION/pmd-bin-$VERSION.zip
+unzip pmd-bin-$VERSION.zip
+rm -f pmd-bin-$VERSION.zip
+
+mkdir -p node_modules
+mv pmd-bin-$VERSION > $INSTALL_DIR
+
+cat << EOF > $BIN_DIR/pmd
+#!/bin/sh
+echo
+$INSTALL_DIR/bin/run.sh pmd "\$@"
+EOF
+chmod +x $BIN_DIR/pmd
+
+cat << EOF > $INSTALL_DIR/package.json
+{
+  "name": "pdm",
+  "version": "$VERSION"
+}
+EOF

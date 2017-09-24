@@ -7,7 +7,7 @@
 > This plugin for [Apache Cordova](https://cordova.apache.org/) registers your app to open certain types of files.
 
 ## Overview
-You'd like your app to be listed in the `Open With...` section for certain types of files, on both Android and iOS? This is THE plugin! No need to meddle into Android's Manifests and iOS's PList files, it's a no brainer one liner installation.
+You'd like your app to be listed in the **Open With...** section for certain types of files, on both **Android** and **iOS**? This is THE plugin! No need to meddle into Android's manifests and iOS's plist files, it's all managed for you by a no brainer one liner installation command.
 
 ## Table of Contents
 
@@ -27,11 +27,15 @@ _If your module depends on important but not widely known abstractions or other 
 
 ## Installation
 
+    cordova plugin add .. --variable MIME_TYPE="image/*"
+
 ## Configuration
 _If your module requires configuration before developers can use it, explain it in this section._
 
 ## Usage
 _Show developers what a module looks like in action so they can quickly determine whether the example meets their needs. This section should contain clear, runnable code examples._
+
+Check out a [demo project](https://github.com/j3k0/cordova-plugin-openwith-demo) for an fully functional example.
 
 ## API
 _The API section should detail the module's objects and functions, their signatures, return types, callbacks, and events in detail. Types should be included where they aren't obvious. Caveats should be made clear._

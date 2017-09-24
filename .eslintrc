@@ -1,0 +1,15 @@
+{
+  "extends": "standard",
+  "plugins": [
+    "standard",
+    "mocha",
+    "promise"
+  ],
+  "rules": {
+    "mocha/no-exclusive-tests": "error"
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
