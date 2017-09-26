@@ -21,7 +21,7 @@ You'd like your app to be listed in the **Send to...** section for certain types
 
 ## Background
 
-iOS and Android each have their own ways of handing files to an app. This plugin abstracts them behind a single and simplified interface. It does not expose all subtleties of each system, be this should be enough for 99% of people. Are you the 1% that needs more? Fork and PR if it makes sense, or [ask for help](mailto://contact@fovea.cc).
+iOS and Android each have their own ways of handing over files to an app. This plugin abstracts them behind a single and simplified interface. It does not expose all subtleties of each system, be this should be enough for 99% of people. Are you the 1% that needs more? Fork and PR if it makes sense, or [ask for help](mailto://contact@fovea.cc).
 
 The plugin's API mostly follows Android's terminology.
 
@@ -31,7 +31,7 @@ Below is a short introduction to how the technology works on Android and iOS.
 
 On Android, the app defines, in its __AndroidManifest.xml__ file, the **mime type** of file types it can handle. Wildcard are accepted, so `image/*` can be used to accept all images regardless of the sub-type. The app also defines the type of actions accepted for this file types. By default, only the [SEND](https://developer.android.com/reference/android/content/Intent.html#ACTION_SEND) event is declared by the plugin. Other events that can be of interest are `SEND_MULTIPLE` and `VIEW`.
 
-When a user send the file to your app, the system provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) to the application. An Intent is just an abstract description of an operation to be performed. This Intent defines an action and can be linked with internal URIs to one or more files, through a ["stream" property](https://developer.android.com/reference/android/content/Intent.html#EXTRA_STREAM) attached to the intent. Starting Android 4.4 KitKat, [ClipData](https://developer.android.com/reference/android/content/ClipData.html) was introduced that mimick a sort of Clipboard used to exchange data. Both methods are supported.
+When a user sends a file to your app, the system provides an [Intent](https://developer.android.com/reference/android/content/Intent.html) to the application. An Intent is just an abstract description of an operation to be performed. This Intent defines an action and can be linked with internal URIs to one or more files through the ["stream" property](https://developer.android.com/reference/android/content/Intent.html#EXTRA_STREAM) attached to the intent. Starting Android 4.4 KitKat, [ClipData](https://developer.android.com/reference/android/content/ClipData.html) was introduced to mimick a sort of Clipboard used to exchange data between apps. Both methods are supported.
 
 If you are interested to learn more, the documentations for [Intent.ACTION_SEND](https://developer.android.com/reference/android/content/Intent.html#ACTION_SEND), [ClipData](https://developer.android.com/reference/android/content/ClipData.html) and the [Clipboard Framework](https://developer.android.com/guide/topics/text/copy-paste.html) are good places to start.
 
@@ -41,6 +41,8 @@ If you are interested to learn more, the documentations for [Intent.ACTION_SEND]
 
 ## Installation
 
+Here's the promised one liner:
+
     cordova plugin add cordova-plugin-openwith --variable MIME_TYPE="image/*"
 
 Adjust the `MIME_TYPE` variable to your needs.
@@ -49,9 +51,11 @@ _On Android, you might want to define more supported actions (see the "Backgroun
 
 #### Advanced installation options
 
+If you do not need anything fancy, you can skip this section.
+
 **Android: accept extra actions**
 
-Use the `ANDROID_EXTRA_ACTIONS` to accept additional actions. The variable should contain a valid XML action-element. Example:
+Use the `ANDROID_EXTRA_ACTIONS` to accept additional actions. The variable should contain one or more valid XML action-elements. Example:
 
     MY_EXTRA_ACTIONS='<action android:name="android.intent.action.VIEW" />'
     cordova plugin add cordova-plugin-openwith --variable MIME_TYPE="image/*" --variable "ANDROID_EXTRA_ACTIONS=$MY_EXTRA_ACTIONS"
@@ -61,7 +65,6 @@ To specify more than one extra action, just put them all in the `ANDROID_EXTRA_A
     MY_EXTRA_ACTIONS='<action ... /><action ... />'
 
 ## Usage
-_Show developers what a module looks like in action so they can quickly determine whether the example meets their needs. This section should contain clear, runnable code examples._
 
 ```js
 document.addEventListener('deviceready', setupOpenwith, false);
@@ -109,7 +112,7 @@ function setupOpenwith() {
 }
 ```
 
-Check out the [demo project](https://github.com/j3k0/cordova-plugin-openwith-demo) for a fully functional example.
+Check out the [demo project](https://github.com/j3k0/cordova-plugin-openwith-demo) for a functional example.
 
 ## API
 
