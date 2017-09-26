@@ -34,15 +34,26 @@ class Serializer {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             items = itemsFromClipData(contentResolver, intent.getClipData());
         }
-        if (items == null || items.empty()) {
+        if (items == null || items.length() == 0) {
             items = itemsFromExtras(contentResolver, intent.getExtras());
         }
         if (items == null) {
             return null;
         }
         final JSONObject action = new JSONObject();
+        action.put("action", translateAction(intent.getAction()));
+        action.put("exit", readExitOnSent(intent.getExtras()));
         action.put("items", items);
-        action.put("exitOnSent", readExitOnSent(intent.getExtras()));
+        return action;
+    }
+
+    public static String translateAction(final String action) {
+        if ("android.intent.action.SEND".equals(action) ||
+            "android.intent.action.SEND_MULTIPLE".equals(action)) {
+            return "SEND";
+        } else if ("android.intent.action.VIEW".equals(action)) {
+            return "VIEW";
+        }
         return action;
     }
 
@@ -115,7 +126,6 @@ class Serializer {
         json.put("type", type);
         json.put("uri", uri);
         json.put("path", getRealPathFromURI(contentResolver, uri));
-        json.put("data", getDataFromURI(contentResolver, uri));
         return json;
     }
 
@@ -129,7 +139,7 @@ class Serializer {
             return Base64.encodeToString(bytes, Base64.DEFAULT);
         }
         catch (IOException e) {
-            return null;
+            return "";
         }
     }
 

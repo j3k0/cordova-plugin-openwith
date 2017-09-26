@@ -70,14 +70,15 @@ SOFTWARE.
         <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
             <!-- Open With  -->
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-            <!-- See https://developer.android.com/guide/topics/manifest/data-element.html -->
             <intent-filter>
-                <!-- action android:name="android.intent.action.VIEW" / -->
                 <!-- category android:name="android.intent.category.BROWSABLE" / -->
-                <!-- action android:name="android.intent.action.SEND_MULTIPLE" / -->
-                <action android:name="android.intent.action.SEND" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <!-- See https://developer.android.com/guide/topics/manifest/data-element.html -->
                 <data android:mimeType="$MIME_TYPE" />
+                <action android:name="android.intent.action.SEND" />
+                $ANDROID_EXTRA_ACTIONS
+                <!-- action android:name="android.intent.action.VIEW" / -->
+                <!-- action android:name="android.intent.action.SEND_MULTIPLE" / -->
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </config-file>
 

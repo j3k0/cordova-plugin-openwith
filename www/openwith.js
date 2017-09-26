@@ -19,6 +19,10 @@ function initOpenwithPlugin (root) {
   var WARN = openwith.WARN = 20
   var ERROR = openwith.ERROR = 30
 
+  // actions
+  openwith.SEND = 'SEND'
+  openwith.VIEW = 'VIEW'
+
   //
   // state variables
   //
@@ -29,11 +33,11 @@ function initOpenwithPlugin (root) {
   // list of registered handlers
   var handlers
 
-  // list of files opened with this app
+  // list of intents sent to this app
   //
   // it's never cleaned up, so that newly registered handlers (especially those registered a bit too late)
-  // will still receive the list of files.
-  var files
+  // will still receive the list of intents.
+  var intents
 
   // the logger function (defaults to console.log)
   var logger
@@ -79,7 +83,7 @@ function initOpenwithPlugin (root) {
     log(DEBUG, 'reset')
     verbosity = openwith.INFO
     handlers = []
-    files = []
+    intents = []
     logger = console.log
     cordova = root.cordova
     initCalled = false
@@ -129,7 +133,7 @@ function initOpenwithPlugin (root) {
     return -1
   }
 
-  // registers a file handler
+  // registers a intent handler
   openwith.addHandler = function (callback) {
     log(DEBUG, 'addHandler()')
     if (typeof callback !== 'function') {
@@ -139,8 +143,8 @@ function initOpenwithPlugin (root) {
       throw new Error('handler already defined')
     }
     handlers.push(callback)
-    files.forEach(function handleFile (file) {
-      callback(file)
+    intents.forEach(function handleIntent (intent) {
+      callback(intent)
     })
   }
 
@@ -149,13 +153,32 @@ function initOpenwithPlugin (root) {
     return handlers.length
   }
 
-  var onNewFile = function (fileDescriptor) {
-    log(DEBUG, 'onNewFile(' + JSON.stringify(fileDescriptor) + ')')
-    // process the new file
+  openwith.load = function (dataDescriptor, successCallback, errorCallback) {
+    var loadSuccess = function (base64) {
+      dataDescriptor.base64 = base64
+      if (successCallback) {
+        successCallback(base64, dataDescriptor)
+      }
+    }
+    var loadError = function (err) {
+      if (errorCallback) {
+        errorCallback(err, dataDescriptor)
+      }
+    }
+    if (dataDescriptor.base64) {
+      loadSuccess(dataDescriptor.base64)
+    } else {
+      cordova.exec(loadSuccess, loadError, PLUGIN_NAME, 'load', [dataDescriptor])
+    }
+  }
+
+  var onNewIntent = function (intent) {
+    log(DEBUG, 'onNewIntent(' + intent.action + ')')
+    // process the new intent
     handlers.forEach(function (handler) {
-      handler(fileDescriptor)
+      handler(intent)
     })
-    files.push(fileDescriptor)
+    intents.push(intent)
   }
 
   // Initialize the native side at startup
@@ -188,7 +211,7 @@ function initOpenwithPlugin (root) {
     }
 
     cordova.exec(nativeLogger, null, PLUGIN_NAME, 'setLogger', [])
-    cordova.exec(onNewFile, null, PLUGIN_NAME, 'setHandler', [])
+    cordova.exec(onNewIntent, null, PLUGIN_NAME, 'setHandler', [])
     cordova.exec(initSuccess, initError, PLUGIN_NAME, 'init', [])
   }
 

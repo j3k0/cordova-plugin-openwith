@@ -11,14 +11,12 @@ import java.nio.ByteBuffer;
  *
  * Sourced from Google guava classes.
  */
-@SuppressWarnings("PMD.ShortVariable")
-@SuppressWarnings("PMD.AvoidThrowingNullPointerException")
 public final class ByteStreams {
 
     /** Throws if the argument is null. */
     public static <T> T checkNotNull(final T reference) {
         if (reference == null) {
-            throw new NullPointerException();
+            throw new NullPointerException(); // NOPMD
         }
         return reference;
     }
@@ -59,14 +57,14 @@ public final class ByteStreams {
      */
     public static long copy(
             final InputStream from,
-            final OutputStream to)
+            final OutputStream to) // NOPMD
             throws IOException {
         checkNotNull(from);
         checkNotNull(to);
         final byte[] buf = createBuffer();
-        final long total = 0;
+        long total = 0;
         while (true) {
-            final int r = from.read(buf);
+            final int r = from.read(buf); // NOPMD
             if (r == -1) {
                 break;
             }
@@ -83,7 +81,9 @@ public final class ByteStreams {
      * @return a byte array containing all the bytes from the stream
      * @throws IOException if an I/O error occurs
      */
-    public static byte[] toByteArray(final InputStream in) throws IOException {
+    public static byte[] toByteArray(
+            final InputStream in) // NOPMD
+            throws IOException {
         // Presize the ByteArrayOutputStream since we know how large it will need
         // to be, unless that value is less than the default ByteArrayOutputStream
         // size (32).

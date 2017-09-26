@@ -62,7 +62,7 @@ public class OpenWithPlugin extends CordovaPlugin {
     private CallbackContext loggerContext;
 
     /** Intents added before the handler has been registered */
-    private RandomAccess pendingIntents = new ArrayList();
+    private ArrayList pendingIntents = new ArrayList(); //NOPMD
 
     /**
      * Called when the WebView does a top-level navigation or refreshes.
@@ -101,6 +101,9 @@ public class OpenWithPlugin extends CordovaPlugin {
         }
         else if ("setLogger".equals(action)) {
             return setLogger(data, callbackContext);
+        }
+        else if ("load".equals(action)) {
+            return load(data, callbackContext);
         }
         log(DEBUG, "execute() did not recognize this action: " + action);
         return false;
@@ -159,6 +162,34 @@ public class OpenWithPlugin extends CordovaPlugin {
         return PluginResultSender.noResult(context, true);
     }
 
+    public boolean load(final JSONArray data, final CallbackContext context) {
+        log(DEBUG, "load()");
+        if (data.length() != 1) {
+            log(WARN, "setLogger() -> invalidAction");
+            return false;
+        }
+        final ContentResolver contentResolver = this.cordova
+            .getActivity().getApplicationContext().getContentResolver();
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    final JSONObject fileDescriptor = data.getJSONObject(0);
+                    final Uri uri = Uri.parse(fileDescriptor.getString("uri"));
+                    final String data = Serializer.getDataFromURI(contentResolver, uri);
+                    final PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+                    context.sendPluginResult(result);
+                    log(DEBUG, "load() " + uri + " -> ok");
+                }
+                catch (JSONException e) {
+                    final PluginResult result = new PluginResult(PluginResult.Status.ERROR, e.getMessage());
+                    context.sendPluginResult(result);
+                    log(DEBUG, "load() -> json error");
+                }
+            }
+        });
+        return true;
+    }
+
     /**
      * This is called when a new intent is sent while the app is already opened.
      *
@@ -202,9 +233,7 @@ public class OpenWithPlugin extends CordovaPlugin {
     private JSONObject toJSONObject(final Intent intent) {
         try {
             final ContentResolver contentResolver = this.cordova
-                .getActivity()
-                .getApplicationContext()
-                .getContentResolver();
+                .getActivity().getApplicationContext().getContentResolver();
             return Serializer.toJSONObject(contentResolver, intent);
         } catch (JSONException e) {
             log(ERROR, "Error converting intent to JSON: " + e.getMessage());
