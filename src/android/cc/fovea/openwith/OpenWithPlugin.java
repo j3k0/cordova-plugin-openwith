@@ -124,8 +124,6 @@ public class OpenWithPlugin extends CordovaPlugin {
     }
 
     // Initialize the plugin
-    //
-    // data contains the "onNewFile" function
     public boolean init(final JSONArray data, final CallbackContext context) {
         log(DEBUG, "init() " + data);
         if (data.length() != 0) {
@@ -162,7 +160,7 @@ public class OpenWithPlugin extends CordovaPlugin {
     public boolean load(final JSONArray data, final CallbackContext context) {
         log(DEBUG, "load()");
         if (data.length() != 1) {
-            log(WARN, "setLogger() -> invalidAction");
+            log(WARN, "load() -> invalidAction");
             return false;
         }
         final ContentResolver contentResolver = this.cordova

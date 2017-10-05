@@ -28,10 +28,10 @@ SOFTWARE.
     id="cc.fovea.cordova.openwith"
     version="1.0.0">
 
-    <name>Open With</name>
+    <name>OpenWith</name>
 	<description>Cordova "Open With" plugin for iOS and Android</description>
     <engines>
-        <engine name="cordova" version=">=2.4.0" />
+        <engine name="cordova" version=">=6.0.0" />
     </engines>
     <repo>https://github.com/j3k0/cordova-plugin-openwith.git</repo>
     <issue>https://github.com/j3k0/cordova-plugin-openwith/issues</issue>
@@ -41,6 +41,8 @@ SOFTWARE.
 
     <!-- ios -->
     <platform name="ios">
+        <preference name="UNIFORM_TYPE_IDENTIFIER" />
+
         <js-module src="www/openwith.js" name="openwith">
             <clobbers target="cordova.openwith" />
         </js-module>
@@ -50,18 +52,30 @@ SOFTWARE.
 
         <!-- Cordova 2.5+ -->
         <config-file target="config.xml" parent="/*">
-            <feature name="OpenWith">
-                <param name="ios-package" value="OpenWith"/>
+            <feature name="OpenWithPlugin">
+                <param name="ios-package" value="OpenWithPlugin" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
-        <header-file src="src/ios/OpenWith.h" />
-        <source-file src="src/ios/OpenWith.m" />
+        <source-file src="src/ios/OpenWithPlugin.m" />
+
+        <!-- config-file target="*-Info.plist" parent="LSItemContentTypes">
+            <array>
+                <string>$UNIFORM_TYPE_IDENTIFIER</string>
+            </array>
+        </config-file -->
+
+        <hook type="before_plugin_install" src="hooks/npmInstall.js" />
+        <hook type="before_plugin_install" src="hooks/iosCopyShareExtension.js" />
+        <hook type="after_plugin_install" src="hooks/iosAddTarget.js" />
     </platform>
 
     <!-- android -->
     <platform name="android">
+
         <preference name="MIME_TYPE" />
+        <preference name="ANDROID_EXTRA_ACTIONS" default=" " />
 
         <js-module src="www/openwith.js" name="openwith">
             <clobbers target="cordova.openwith" />
