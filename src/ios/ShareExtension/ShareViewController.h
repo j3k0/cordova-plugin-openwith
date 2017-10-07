@@ -25,9 +25,6 @@
 // THE SOFTWARE.
 //
 
-#import <UIKit/UIKit.h>
-#import <Social/Social.h>
-
-@interface ShareViewController : SLComposeServiceViewController
-
-@end
+#define SHAREEXT_GROUP_IDENTIFIER @"group.__BUNDLE_IDENTIFIER__"
+#define SHAREEXT_URL_SCHEME @"__URL_SCHEME__"
+#define SHAREEXT_UNIFORM_TYPE_IDENTIFIER @"__UNIFORM_TYPE_IDENTIFIER__"

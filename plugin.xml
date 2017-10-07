@@ -41,7 +41,8 @@ SOFTWARE.
 
     <!-- ios -->
     <platform name="ios">
-        <preference name="UNIFORM_TYPE_IDENTIFIER" />
+        <preference name="IOS_URL_SCHEME" />
+        <preference name="IOS_UNIFORM_TYPE_IDENTIFIER" />
 
         <js-module src="www/openwith.js" name="openwith">
             <clobbers target="cordova.openwith" />
@@ -60,21 +61,31 @@ SOFTWARE.
 
         <source-file src="src/ios/OpenWithPlugin.m" />
 
-        <!-- config-file target="*-Info.plist" parent="LSItemContentTypes">
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
             <array>
-                <string>$UNIFORM_TYPE_IDENTIFIER</string>
+                <dict>
+                    <string>CFBundleURLName</string>
+                    <string>cc.fovea.openwith.$IOS_URL_SCHEME.shareextension</string>
+                    <string>CFBundleURLSchemes</string>
+                    <array>
+                        <string>$IOS_URL_SCHEME</string>
+                    </array>
+                </dict>
             </array>
-        </config-file -->
+        </config-file>
 
         <hook type="before_plugin_install" src="hooks/npmInstall.js" />
         <hook type="before_plugin_install" src="hooks/iosCopyShareExtension.js" />
         <hook type="after_plugin_install" src="hooks/iosAddTarget.js" />
+        <hook type="before_plugin_uninstall" src="hooks/iosRemoveTarget.js" />
+
+        <framework src="MobileCoreServices.framework" />
     </platform>
 
     <!-- android -->
     <platform name="android">
 
-        <preference name="MIME_TYPE" />
+        <preference name="ANDROID_MIME_TYPE" />
         <preference name="ANDROID_EXTRA_ACTIONS" default=" " />
 
         <js-module src="www/openwith.js" name="openwith">
@@ -87,7 +98,7 @@ SOFTWARE.
             <intent-filter>
                 <!-- category android:name="android.intent.category.BROWSABLE" / -->
                 <!-- See https://developer.android.com/guide/topics/manifest/data-element.html -->
-                <data android:mimeType="$MIME_TYPE" />
+                <data android:mimeType="$ANDROID_MIME_TYPE" />
                 <action android:name="android.intent.action.SEND" />
                 $ANDROID_EXTRA_ACTIONS
                 <!-- action android:name="android.intent.action.VIEW" / -->

@@ -1,6 +1,6 @@
 //
-//  iosAddTarget.js
-//  This hook runs for the iOS platform when the plugin or platform is added.
+//  iosRemoveTarget.js
+//  This hook runs for the iOS platform when the plugin or platform is removed.
 //
 // Source: https://github.com/DavidStrausz/cordova-plugin-today-widget
 //
@@ -29,24 +29,14 @@
 // THE SOFTWARE.
 //
 
-const PLUGIN_ID = 'cc.fovea.cordova.openwith';
-const BUNDLE_SUFFIX = '.shareextension';
+const PLUGIN_ID = "cc.fovea.cordova.openwith";
+const BUNDLE_SUFFIX = ".shareextension";
 
 var fs = require('fs');
 var path = require('path');
 
 function redError(message) {
     return new Error('"' + PLUGIN_ID + '" \x1b[1m\x1b[31m' + message + '\x1b[0m');
-}
-
-function replacePreferencesInFile(filePath, preferences) {
-    var content = fs.readFileSync(filePath, 'utf8');
-    for (var i = 0; i < preferences.length; i++) {
-        var pref = preferences[i];
-        var regexp = new RegExp(pref.key, "g");
-        content = content.replace(regexp, pref.value);
-    }
-    fs.writeFileSync(filePath, content);
 }
 
 // Determine the full path to the app's xcode project file.
@@ -82,35 +72,6 @@ function iosFolder(context) {
     ? context.opts.cordova.project.root
     : path.join(context.opts.projectRoot, 'platforms/ios/');
 }
-
-function getPreferenceValue(configXml, name) {
-  var value = configXml.match(new RegExp('name="' + name + '" value="(.*?)"', "i"));
-  if (value && value[1]) {
-    return value[1];
-  } else {
-    return null;
-  }
-}
-
-function getCordovaParameter(configXml, variableName) {
-  var variable;
-  var arg = process.argv.filter(function(arg) {
-    return arg.indexOf(variableName + '=') == 0;
-  });
-  if (arg.length >= 1) {
-    variable = arg[0].split('=')[1];
-  } else {
-    variable = getPreferenceValue(configXml, variableName);
-  }
-  return variable;
-}
-
-// Get the bundle id from config.xml
-// function getBundleId(context, configXml) {
-//   var elementTree = context.requireCordovaModule('elementtree');
-//   var etree = elementTree.parse(configXml);
-//   return etree.getroot().get('id');
-// }
 
 function parsePbxProject(context, pbxProjectPath) {
   var xcode = context.requireCordovaModule('xcode');
@@ -149,7 +110,7 @@ function projectPlistJson(context, projectName) {
   return plist.parse(fs.readFileSync(path, 'utf8'));
 }
 
-function getPreferences(context, configXml, projectName) {
+function getPreferences(context, projectName) {
   var plist = projectPlistJson(context, projectName);
   return [{
     key: '__DISPLAY_NAME__',
@@ -164,11 +125,8 @@ function getPreferences(context, configXml, projectName) {
     key: '__BUNDLE_VERSION__',
     value: plist.CFBundleVersion
   }, {
-    key: '__URL_SCHEME__',
-    value: getCordovaParameter(configXml, 'IOS_URL_SCHEME')
-  }, {
-    key: '__UNIFORM_TYPE_IDENTIFIER__',
-    value: getCordovaParameter(configXml, 'IOS_UNIFORM_TYPE_IDENTIFIER')
+    key: '__URL_KEY__',
+    value: plist.CFBundleIdentifier.replace(/[^a-zA-Z]/g, '').toLowerCase()
   }];
 }
 
@@ -183,39 +141,12 @@ function getShareExtensionFiles(context) {
   return files;
 }
 
-function printShareExtensionFiles(files) {
-  console.log('    Found following files in your ShareExtension folder:');
-  console.log('    Source files:');
-  files.source.forEach(function(file) {
-    console.log('     - ', file.name);
-  });
-
-  console.log('    Plist files:');
-  files.plist.forEach(function(file) {
-    console.log('     - ', file.name);
-  });
-
-  console.log('    Resource files:');
-  files.resource.forEach(function(file) {
-    console.log('     - ', file.name);
-  });
-}
-
-console.log('Adding target "' + PLUGIN_ID + '/ShareExtension" to XCode project');
+console.log('Removing target "' + PLUGIN_ID + '/ShareExtension" to XCode project');
 
 module.exports = function (context) {
 
   var Q = context.requireCordovaModule('q');
   var deferral = new Q.defer();
-
-  // if (context.opts.cordova.platforms.indexOf('ios') < 0) {
-  //   log('You have to add the ios platform before adding this plugin!', 'error');
-  // }
-
-  var configXml = fs.readFileSync(path.join(context.opts.projectRoot, 'config.xml'), 'utf-8');
-  if (configXml) {
-    configXml = configXml.substring(configXml.indexOf('<'));
-  }
 
   findXCodeproject(context, function(projectFolder, projectName) {
 
@@ -223,62 +154,32 @@ module.exports = function (context) {
 
     var pbxProjectPath = path.join(projectFolder, 'project.pbxproj');
     var pbxProject = parsePbxProject(context, pbxProjectPath);
-
     var files = getShareExtensionFiles(context);
-    // printShareExtensionFiles(files);
-
-    var preferences = getPreferences(context, configXml, projectName);
-    files.plist.concat(files.source).forEach(function(file) {
-      replacePreferencesInFile(file.path, preferences);
-      // console.log('    Successfully updated ' + file.name);
-    });
 
     // Find if the project already contains the target and group
     var target = pbxProject.pbxTargetByName('ShareExtension');
-    if (target) {
-      console.log('    ShareExtension target already exists.');
-    }
-
-    if (!target) {
-      // Add PBXNativeTarget to the project
-      target = pbxProject.addTarget('ShareExtension', 'app_extension', 'ShareExtension');
-      
-      // Add a new PBXSourcesBuildPhase for our ShareViewController
-      // (we can't add it to the existing one because an extension is kind of an extra app)
-      pbxProject.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', target.uuid);
-
-      // Add a new PBXResourcesBuildPhase for the Resources used by the Share Extension
-      // (MainInterface.storyboard)
-      pbxProject.addBuildPhase([], 'PBXResourcesBuildPhase', 'Resources', target.uuid);
-    }
-
-    // Create a separate PBXGroup for the shareExtensions files, name has to be unique and path must be in quotation marks
     var pbxGroupKey = pbxProject.findPBXGroupKey({name: 'ShareExtension'});
-    if (pbxProject) {
-      console.log('    ShareExtension group already exists.');
-    }
-    if (!pbxGroupKey) {
-      pbxGroupKey = pbxProject.pbxCreateGroup('ShareExtension', 'ShareExtension');
 
-      // Add the PbxGroup to cordovas "CustomTemplate"-group
+    // Remove the PbxGroup from cordovas "CustomTemplate"-group
+    if (pbxGroupKey) {
       var customTemplateKey = pbxProject.findPBXGroupKey({name: 'CustomTemplate'});
-      pbxProject.addToPbxGroup(pbxGroupKey, customTemplateKey);
+      pbxProject.removeFromPbxGroup(pbxGroupKey, customTemplateKey);
+
+      // Remove files which are not part of any build phase (config)
+      files.plist.forEach(function (file) {
+        pbxProject.removeFile(file.name, pbxGroupKey);
+      });
+
+      // Remove source files to our PbxGroup and our newly created PBXSourcesBuildPhase
+      files.source.forEach(function(file) {
+        pbxProject.removeSourceFile(file.name, {target: target.uuid}, pbxGroupKey);
+      });
+
+      //  Remove the resource file and include it into the targest PbxResourcesBuildPhase and PbxGroup
+      files.resource.forEach(function(file) {
+        pbxProject.removeResourceFile(file.name, {target: target.uuid}, pbxGroupKey);
+      });
     }
-
-    // Add files which are not part of any build phase (config)
-    files.plist.forEach(function (file) {
-      pbxProject.addFile(file.name, pbxGroupKey);
-    });
-
-    // Add source files to our PbxGroup and our newly created PBXSourcesBuildPhase
-    files.source.forEach(function(file) {
-      pbxProject.addSourceFile(file.name, {target: target.uuid}, pbxGroupKey);
-    });
-
-    //  Add the resource file and include it into the targest PbxResourcesBuildPhase and PbxGroup
-    files.resource.forEach(function(file) {
-      pbxProject.addResourceFile(file.name, {target: target.uuid}, pbxGroupKey);
-    });
 
     // Add a new PBXFrameworksBuildPhase for the Frameworks used by the Share Extension
     // (NotificationCenter.framework, libCordova.a)
@@ -302,6 +203,10 @@ module.exports = function (context) {
     // }); // seems to work because the first target is built before the second one
     // if (frameworkFile1 && frameworkFile2) {
     //   log('Successfully added frameworks needed by the share extension!', 'info');
+    // }
+
+    // if (resourcesBuildPhase) {
+    //   console.log('    Successfully added PBXResourcesBuildPhase!');
     // }
 
     // Add build settings for Swift support, bridging header and xcconfig files
@@ -329,7 +234,7 @@ module.exports = function (context) {
     // Write the modified project back to disc
     // console.log('    Writing the modified project back to disk...');
     fs.writeFileSync(pbxProjectPath, pbxProject.writeSync());
-    console.log('Added ShareExtension to XCode project');
+    console.log('Removed ShareExtension from XCode project');
 
     deferral.resolve();
   });

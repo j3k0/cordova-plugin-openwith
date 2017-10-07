@@ -39,12 +39,16 @@
     "url": "https://github.com/j3k0/cordova-plugin-openwith/issues"
   },
   "homepage": "https://github.com/j3k0/cordova-plugin-openwith",
+
+  "# Dependencies required by the hooks": "",
   "dependencies": {
     "file-system": "^2.2.2",
     "path": "^0.12.7",
     "plist": "^2.1.0",
     "xcode": "git+https://github.com/apache/cordova-node-xcode.git"
   },
+
+  "# Dependencies required to run tests": "",
   "devDependencies": {
     "eslint": "^4.7.2",
     "eslint-config-standard": "^10.2.1",
@@ -56,5 +60,29 @@
     "eslint-watch": "^3.1.2",
     "expect.js": "^0.3.1",
     "mocha": "^3.5.3"
-  }
+  },
+
+  "# White list the files to pack by npm publish": "",
+  "files": [
+    "src/android/cc/fovea/openwith/ByteStreams.java",
+    "src/android/cc/fovea/openwith/OpenWithPlugin.java",
+    "src/android/cc/fovea/openwith/PluginResultSender.java",
+    "src/android/cc/fovea/openwith/Serializer.java",
+    "src/ios/OpenWithPlugin.m",
+    "src/ios/ShareExtension/MainInterface.storyboard",
+    "src/ios/ShareExtension/ShareExtension-Info.plist",
+    "src/ios/ShareExtension/ShareViewController.h",
+    "src/ios/ShareExtension/ShareViewController.m",
+    "www/openwith.js",
+    "www/test-openwith.js",
+    "hooks/iosAddTarget.js",
+    "hooks/iosRemoveTarget.js",
+    "hooks/iosCopyShareExtension.js",
+    "hooks/npmInstall.js",
+    "install-pmd",
+    "plugin.xml",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ]
 }

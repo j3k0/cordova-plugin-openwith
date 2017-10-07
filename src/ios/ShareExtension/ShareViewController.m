@@ -27,23 +27,149 @@
 // THE SOFTWARE.
 //
 
+#import <UIKit/UIKit.h>
+#import <Social/Social.h>
 #import "ShareViewController.h"
 
-@interface ShareViewController ()
-
+@interface ShareViewController : SLComposeServiceViewController {
+    int _verbosityLevel;
+    NSUserDefaults *_userDefaults;
+}
+@property (nonatomic) int verbosityLevel;
+@property (nonatomic,retain) NSUserDefaults *userDefaults;
 @end
+
+/*
+ * Constants
+ */
+
+#define VERBOSITY_DEBUG  0
+#define VERBOSITY_INFO  10
+#define VERBOSITY_WARN  20
+#define VERBOSITY_ERROR 30
 
 @implementation ShareViewController
 
+@synthesize verbosityLevel = _verbosityLevel;
+@synthesize userDefaults = _userDefaults;
+
+- (void) log:(int)level message:(NSString*)message {
+    if (level >= self.verbosityLevel) {
+        NSLog(@"[ShareViewController.m]%@", message);
+    }
+}
+- (void) debug:(NSString*)message { [self log:VERBOSITY_DEBUG message:message]; }
+- (void) info:(NSString*)message { [self log:VERBOSITY_INFO message:message]; }
+- (void) warn:(NSString*)message { [self log:VERBOSITY_WARN message:message]; }
+- (void) error:(NSString*)message { [self log:VERBOSITY_ERROR message:message]; }
+
+- (void) setup {
+    self.userDefaults = [[NSUserDefaults alloc] initWithSuiteName:SHAREEXT_GROUP_IDENTIFIER];
+    self.verbosityLevel = [self.userDefaults integerForKey:@"verbosityLevel"];
+    [self debug:@"[setup]"];
+}
+
 - (BOOL)isContentValid {
-    // Do validation of contentText and/or NSExtensionContext attachments here
     return YES;
 }
 
+- (void)openURL:(nonnull NSURL *)url {
+
+    SEL selector = NSSelectorFromString(@"openURL:options:completionHandler:");
+
+    UIResponder* responder = self;
+    while ((responder = [responder nextResponder]) != nil) {
+        NSLog(@"responder = %@", responder);
+        if([responder respondsToSelector:selector] == true) {
+            NSMethodSignature *methodSignature = [responder methodSignatureForSelector:selector];
+            NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
+
+            // Arguments
+            NSDictionary<NSString *, id> *options = [NSDictionary dictionary];
+            void (^completion)(BOOL success) = ^void(BOOL success) {
+                NSLog(@"Completions block: %i", success);
+            };
+
+            [invocation setTarget: responder];
+            [invocation setSelector: selector];
+            [invocation setArgument: &url atIndex: 2];
+            [invocation setArgument: &options atIndex:3];
+            [invocation setArgument: &completion atIndex: 4];
+            [invocation invoke];
+            break;
+        }
+    }
+}
+
 - (void)didSelectPost {
+
+    [self setup];
+    [self debug:@"[didSelectPost]"];
+
     // This is called after the user selects Post. Do the upload of contentText and/or NSExtensionContext attachments.
-    
-    // Inform the host that we're done, so it un-blocks its UI. Note: Alternatively you could call super's -didSelectPost, which will similarly complete the extension context.
+    for (NSItemProvider* itemProvider in ((NSExtensionItem*)self.extensionContext.inputItems[0]).attachments) {
+        
+        if ([itemProvider hasItemConformingToTypeIdentifier:@"public.image"]) {
+            [self debug:[NSString stringWithFormat:@"item provider = %@", itemProvider]];
+            
+            [itemProvider loadItemForTypeIdentifier:@"public.image" options:nil completionHandler: ^(id<NSSecureCoding> item, NSError *error) {
+                
+                NSData *data;
+                if([(NSObject*)item isKindOfClass:[NSURL class]]) {
+                    data = [NSData dataWithContentsOfURL:(NSURL*)item];
+                }
+                if([(NSObject*)item isKindOfClass:[UIImage class]]) {
+                    data = UIImagePNGRepresentation((UIImage*)item);
+                }
+
+                NSString *suggestedName = @"";
+                if ([itemProvider respondsToSelector:NSSelectorFromString(@"getSuggestedName")]) {
+                    suggestedName = [itemProvider valueForKey:@"suggestedName"];
+                }
+
+                NSString *uti = nil;
+                if ([itemProvider.registeredTypeIdentifiers count] > 0) {
+                    uti = itemProvider.registeredTypeIdentifiers[0];
+                }
+                else {
+                    uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
+                }
+                
+                NSDictionary *dict = @{
+                    @"text" : self.contentText,
+                    @"data" : data,
+                    @"uti": uti,
+                    @"utis": itemProvider.registeredTypeIdentifiers,
+                    @"name": suggestedName
+                };
+                [self.userDefaults setObject:dict forKey:@"image"];
+                [self.userDefaults synchronize];
+
+                // Emit a URL that opens the cordova app
+                NSString *url = [NSString stringWithFormat:@"%@://image", SHAREEXT_URL_SCHEME];
+
+                // Not allowed:
+                // [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+                
+                // Crashes:
+                // [self.extensionContext openURL:[NSURL URLWithString:url] completionHandler:nil];
+                
+                // From https://stackoverflow.com/a/25750229/2343390
+                // Reported not to work since iOS 8.3
+                // NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:url]];
+                // [self.webView loadRequest:request];
+                
+                [self openURL:[NSURL URLWithString:url]];
+
+                // Inform the host that we're done, so it un-blocks its UI.
+                [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
+            }];
+
+            return;
+        }
+    }
+
+    // Inform the host that we're done, so it un-blocks its UI.
     [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
 }
 
