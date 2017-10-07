@@ -253,7 +253,7 @@ static NSDictionary* launchOptions = nil;
             @"type": type,
             @"utis": utis,
             @"uri": uri,
-            @"name", name
+            @"name": name
         }]
     }];
     pluginResult.keepCallback = [NSNumber numberWithBool:YES];
