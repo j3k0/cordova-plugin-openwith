@@ -102,6 +102,9 @@ public class OpenWithPlugin extends CordovaPlugin {
         else if ("load".equals(action)) {
             return load(data, callbackContext);
         }
+        else if ("exit".equals(action)) {
+            return exit(data, callbackContext);
+        }
         log(DEBUG, "execute() did not recognize this action: " + action);
         return false;
     }
@@ -132,6 +135,18 @@ public class OpenWithPlugin extends CordovaPlugin {
         }
         onNewIntent(cordova.getActivity().getIntent());
         log(DEBUG, "init() -> ok");
+        return PluginResultSender.ok(context);
+    }
+
+    // Exit after processing
+    public boolean exit(final JSONArray data, final CallbackContext context) {
+        log(DEBUG, "exit() " + data);
+        if (data.length() != 0) {
+            log(WARN, "exit() -> invalidAction");
+            return false;
+        }
+        cordova.getActivity().moveTaskToBack(true);
+        log(DEBUG, "exit() -> ok");
         return PluginResultSender.ok(context);
     }
 

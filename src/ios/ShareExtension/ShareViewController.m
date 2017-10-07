@@ -34,9 +34,11 @@
 @interface ShareViewController : SLComposeServiceViewController {
     int _verbosityLevel;
     NSUserDefaults *_userDefaults;
+    NSString *_backURL;
 }
 @property (nonatomic) int verbosityLevel;
 @property (nonatomic,retain) NSUserDefaults *userDefaults;
+@property (nonatomic,retain) NSString *backURL;
 @end
 
 /*
@@ -52,6 +54,7 @@
 
 @synthesize verbosityLevel = _verbosityLevel;
 @synthesize userDefaults = _userDefaults;
+@synthesize backURL = _backURL;
 
 - (void) log:(int)level message:(NSString*)message {
     if (level >= self.verbosityLevel) {
@@ -69,11 +72,11 @@
     [self debug:@"[setup]"];
 }
 
-- (BOOL)isContentValid {
+- (BOOL) isContentValid {
     return YES;
 }
 
-- (void)openURL:(nonnull NSURL *)url {
+- (void) openURL:(nonnull NSURL *)url {
 
     SEL selector = NSSelectorFromString(@"openURL:options:completionHandler:");
 
@@ -101,7 +104,7 @@
     }
 }
 
-- (void)didSelectPost {
+- (void) didSelectPost {
 
     [self setup];
     [self debug:@"[didSelectPost]"];
@@ -134,9 +137,9 @@
                 else {
                     uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
                 }
-                
                 NSDictionary *dict = @{
                     @"text" : self.contentText,
+                    @"backURL": self.backURL,
                     @"data" : data,
                     @"uti": uti,
                     @"utis": itemProvider.registeredTypeIdentifiers,
@@ -173,9 +176,63 @@
     [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
 }
 
-- (NSArray *)configurationItems {
+- (NSArray*) configurationItems {
     // To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
     return @[];
+}
+
+- (NSString*) backURLFromBundleID: (NSString*)bundleId {
+    if (bundleId == nil) return nil;
+    // App Store - com.apple.AppStore
+    if ([bundleId isEqualToString:@"com.apple.AppStore"]) return @"itms-apps://";
+    // Calculator - com.apple.calculator
+    // Calendar - com.apple.mobilecal
+    // Camera - com.apple.camera
+    // Clock - com.apple.mobiletimer
+    // Compass - com.apple.compass
+    // Contacts - com.apple.MobileAddressBook
+    // FaceTime - com.apple.facetime
+    // Find Friends - com.apple.mobileme.fmf1
+    // Find iPhone - com.apple.mobileme.fmip1
+    // Game Center - com.apple.gamecenter
+    // Health - com.apple.Health
+    // iBooks - com.apple.iBooks
+    // iTunes Store - com.apple.MobileStore
+    // Mail - com.apple.mobilemail - message://
+    if ([bundleId isEqualToString:@"com.apple.mobilemail"]) return @"message://";
+    // Maps - com.apple.Maps - maps://
+    if ([bundleId isEqualToString:@"com.apple.Maps"]) return @"maps://";
+    // Messages - com.apple.MobileSMS
+    // Music - com.apple.Music
+    // News - com.apple.news - applenews://
+    if ([bundleId isEqualToString:@"com.apple.news"]) return @"applenews://";
+    // Notes - com.apple.mobilenotes - mobilenotes://
+    if ([bundleId isEqualToString:@"com.apple.mobilenotes"]) return @"mobilenotes://";
+    // Phone - com.apple.mobilephone
+    // Photos - com.apple.mobileslideshow
+    if ([bundleId isEqualToString:@"com.apple.mobileslideshow"]) return @"photos-redirect://";
+    // Podcasts - com.apple.podcasts
+    // Reminders - com.apple.reminders - x-apple-reminder://
+    if ([bundleId isEqualToString:@"com.apple.reminders"]) return @"x-apple-reminder://";
+    // Safari - com.apple.mobilesafari
+    // Settings - com.apple.Preferences
+    // Stocks - com.apple.stocks
+    // Tips - com.apple.tips
+    // Videos - com.apple.videos - videos://
+    if ([bundleId isEqualToString:@"com.apple.videos"]) return @"videos://";
+    // Voice Memos - com.apple.VoiceMemos - voicememos://
+    if ([bundleId isEqualToString:@"com.apple.VoiceMemos"]) return @"voicememos://";
+    // Wallet - com.apple.Passbook
+    // Watch - com.apple.Bridge
+    // Weather - com.apple.weather
+    return nil;
+}
+
+// This is called at the point where the Post dialog is about to be shown.
+// We use it to store the _hostBundleID
+- (void) willMoveToParentViewController: (UIViewController*)parent {
+    NSString *hostBundleID = [parent valueForKey:(@"_hostBundleID")];
+    self.backURL = [self backURLFromBundleID:hostBundleID];
 }
 
 @end

@@ -150,10 +150,19 @@ function setupOpenwith() {
 
     if (intent.items.length > 0) {
       cordova.openwith.load(intent.items[0], function(data, item) {
+
         // data is a long base64 string with the content of the file
         console.log("the item weights " + data.length + " bytes");
         uploadToServer(item);
+
+        // "exit" when done.
+        // Note that there is no need to wait for the upload to finish,
+        // the app can continue while in background.
+        if (intent.exit) { cordova.openwith.exit(); }
       });
+    }
+    else {
+      if (intent.exit) { cordova.openwith.exit(); }
     }
   }
 }
@@ -224,6 +233,18 @@ When data has been successfully loaded, `loadSuccessCallback` will be called. It
 **loadErrorCallback**: function (err, dataDescriptor)
 
 Called when data can't be loaded.
+
+### cordova.openwith.exit()
+
+Attempt to return the the calling app when sharing is done. Your app will be backgrounded,
+it should be able to finish the upload.
+
+On iOS, this call might have no effects. The plugin needs to recognize the app
+you are sharing from in order to send you back to it. The user can still select the
+"Back-to-app" button visible on the top left. Make sure your UI shows the user
+that he can now safely go back to what he was doing.
+
+On Android, the app will be backgrounded no matter what.
 
 ## Contribute
 

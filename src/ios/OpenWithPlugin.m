@@ -70,12 +70,14 @@ static NSDictionary* launchOptions = nil;
     NSString* _handlerCallback;
     NSUserDefaults *_userDefaults;
     int _verbosityLevel;
+    NSString *_backURL;
 }
 
 @property (nonatomic,retain) NSString* loggerCallback;
 @property (nonatomic,retain) NSString* handlerCallback;
 @property (nonatomic) int verbosityLevel;
 @property (nonatomic,retain) NSUserDefaults *userDefaults;
+@property (nonatomic,retain) NSString *backURL;
 @end
 
 /*
@@ -88,6 +90,7 @@ static NSDictionary* launchOptions = nil;
 @synthesize handlerCallback = _handlerCallback;
 @synthesize verbosityLevel = _verbosityLevel;
 @synthesize userDefaults = _userDefaults;
+@synthesize backURL = _backURL;
 
 //
 // Retrieve launchOptions
@@ -227,6 +230,7 @@ static NSDictionary* launchOptions = nil;
     NSData *data = dict[@"data"];
     NSString *text = dict[@"text"];
     NSString *name = dict[@"name"];
+    self.backURL = dict[@"backURL"];
     NSString *type = [self mimeTypeFromUti:dict[@"uti"]];
     if (![data isKindOfClass:NSData.class] || ![text isKindOfClass:NSString.class]) {
         [self debug:@"[checkForFileToShare] Data content is invalid"];
@@ -236,6 +240,9 @@ static NSDictionary* launchOptions = nil;
     if (utis == nil) {
         utis = @[];
     }
+
+    // TODO: add the backURL to the shared intent, put it aside in the plugin
+    // TODO: implement cordova.openwith.exit(intent), will check if backURL is set
 
     // Send to javascript
     [self debug:[NSString stringWithFormat:
@@ -274,6 +281,20 @@ static NSDictionary* launchOptions = nil;
     // Base64 data already loaded, so this shouldn't happen
     // the function is defined just to prevent crashes from unexpected client behaviours.
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Load, it shouldn't have been!"];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+// Exit after sharing
+- (void) exit:(CDVInvokedUrlCommand*)command {
+    [self debug:[NSString stringWithFormat:@"[exit] %@", self.backURL]];
+    if (self.backURL != nil) {
+        UIApplication *app = [UIApplication sharedApplication];
+        NSURL *url = [NSURL URLWithString:self.backURL];
+        if ([app canOpenURL:url]) {
+            [app openURL:url];
+        }
+    }
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
