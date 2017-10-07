@@ -109,10 +109,10 @@
     // This is called after the user selects Post. Do the upload of contentText and/or NSExtensionContext attachments.
     for (NSItemProvider* itemProvider in ((NSExtensionItem*)self.extensionContext.inputItems[0]).attachments) {
         
-        if ([itemProvider hasItemConformingToTypeIdentifier:@"public.image"]) {
+        if ([itemProvider hasItemConformingToTypeIdentifier:SHAREEXT_UNIFORM_TYPE_IDENTIFIER]) {
             [self debug:[NSString stringWithFormat:@"item provider = %@", itemProvider]];
             
-            [itemProvider loadItemForTypeIdentifier:@"public.image" options:nil completionHandler: ^(id<NSSecureCoding> item, NSError *error) {
+            [itemProvider loadItemForTypeIdentifier:SHAREEXT_UNIFORM_TYPE_IDENTIFIER options:nil completionHandler: ^(id<NSSecureCoding> item, NSError *error) {
                 
                 NSData *data;
                 if([(NSObject*)item isKindOfClass:[NSURL class]]) {
