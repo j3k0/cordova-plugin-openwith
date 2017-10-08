@@ -66,6 +66,8 @@ cordova plugin add cc.fovea.cordova.openwith \
 | `IOS_URL_SCHEME` | uniquelonglowercase | **iOS only** Any random long string of lowercase alphabetical characters |
 | `IOS_UNIFORM_TYPE_IDENTIFIER` | public.image | **iOS only** UTI of documents you want to share (check [Apple's System-Declared UTI](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html#//apple_ref/doc/uid/TP40009259-SW1)) |
 
+It shouldn't be too hard. But just in case, I [posted a screencast of it](https://youtu.be/eaE4m_xO1mg).
+
 ### iOS Setup
 
 After having installed the plugin, with the ios platform in place, 1 operation needs to be done manually: setup the App Group on both the Cordova App and the Share Extension.
