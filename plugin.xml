@@ -93,8 +93,6 @@ SOFTWARE.
         </js-module>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application/activity">
-            <!-- Open With  -->
-            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
             <intent-filter>
                 <!-- category android:name="android.intent.category.BROWSABLE" / -->
                 <!-- See https://developer.android.com/guide/topics/manifest/data-element.html -->
