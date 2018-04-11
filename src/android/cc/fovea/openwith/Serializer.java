@@ -136,7 +136,7 @@ class Serializer {
         try {
             final InputStream inputStream = contentResolver.openInputStream(uri);
             final byte[] bytes = ByteStreams.toByteArray(inputStream);
-            return Base64.encodeToString(bytes, Base64.DEFAULT);
+            return Base64.encodeToString(bytes, Base64.NO_WRAP);
         }
         catch (IOException e) {
             return "";
