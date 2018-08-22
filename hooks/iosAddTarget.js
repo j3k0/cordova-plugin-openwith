@@ -151,7 +151,7 @@ function projectPlistJson(context, projectName) {
 
 function getPreferences(context, configXml, projectName) {
   var plist = projectPlistJson(context, projectName);
-  var group = plist.CFBundleIdentifier + BUNDLE_SUFFIX;
+  var group = "group." + plist.CFBundleIdentifier + BUNDLE_SUFFIX;
   if (getCordovaParameter(configXml, 'GROUP_IDENTIFIER') !== "") {
     group = getCordovaParameter(configXml, 'IOS_GROUP_IDENTIFIER');
   }
