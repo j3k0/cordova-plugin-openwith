@@ -65,6 +65,8 @@ cordova plugin add cc.fovea.cordova.openwith \
 | `ANDROID_MIME_TYPE` | image/* | **Android only** Mime type of documents you want to share (wildcards accepted) |
 | `IOS_URL_SCHEME` | uniquelonglowercase | **iOS only** Any random long string of lowercase alphabetical characters |
 | `IOS_UNIFORM_TYPE_IDENTIFIER` | public.image | **iOS only** UTI of documents you want to share (check [Apple's System-Declared UTI](https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html#//apple_ref/doc/uid/TP40009259-SW1)) |
+| `PROVISIONING_PROFILE` | 9dfsdf-.... | **iOS only** Developer account teamId |
+| `DEVELOPMENT_TEAM` | 00B000A09l | **iOS only** UUID of provisioning profile for singing |
 
 It shouldn't be too hard. But just in case, I [posted a screencast of it](https://youtu.be/eaE4m_xO1mg).
 
