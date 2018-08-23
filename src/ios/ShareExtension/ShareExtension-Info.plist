@@ -22,6 +22,8 @@
 	<string>__BUNDLE_VERSION__</string>
 	<key>NSExtension</key>
 	<dict>
+		<key>NSExtensionPrincipalClass</key>
+		<string>ShareViewController</string>
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>NSExtensionActivationRule</key>
@@ -39,8 +41,6 @@
       <key>NSExtensionActivationDictionaryVersion</key>
       <integer>2</integer>
 		</dict>
-		<key>NSExtensionMainStoryboard</key>
-		<string>MainInterface</string>
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.share-services</string>
 	</dict>

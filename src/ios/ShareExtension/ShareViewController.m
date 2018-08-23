@@ -31,7 +31,7 @@
 #import <Social/Social.h>
 #import "ShareViewController.h"
 
-@interface ShareViewController : SLComposeServiceViewController {
+@interface ShareViewController : UIViewController {
     int _verbosityLevel;
     NSUserDefaults *_userDefaults;
     NSString *_backURL;
@@ -65,6 +65,13 @@
 - (void) info:(NSString*)message { [self log:VERBOSITY_INFO message:message]; }
 - (void) warn:(NSString*)message { [self log:VERBOSITY_WARN message:message]; }
 - (void) error:(NSString*)message { [self log:VERBOSITY_ERROR message:message]; }
+
+-(void) viewDidLoad {
+    [super viewDidLoad];
+    printf("did load");
+    [self debug:@"[viewDidLoad]"];
+    [self submit];
+}
 
 - (void) setup {
     self.userDefaults = [[NSUserDefaults alloc] initWithSuiteName:SHAREEXT_GROUP_IDENTIFIER];
@@ -104,10 +111,10 @@
     }
 }
 
-- (void) didSelectPost {
+- (void) submit {
 
     [self setup];
-    [self debug:@"[didSelectPost]"];
+    [self debug:@"[submit]"];
 
     // This is called after the user selects Post. Do the upload of contentText and/or NSExtensionContext attachments.
     for (NSItemProvider* itemProvider in ((NSExtensionItem*)self.extensionContext.inputItems[0]).attachments) {
@@ -140,7 +147,6 @@
                     uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
                 }
                 NSDictionary *dict = @{
-                    @"text": self.contentText,
                     @"backURL": self.backURL,
                     @"data" : data,
                     @"uti": uti,
