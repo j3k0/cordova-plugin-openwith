@@ -117,7 +117,7 @@
             
             [itemProvider loadItemForTypeIdentifier:SHAREEXT_UNIFORM_TYPE_IDENTIFIER options:nil completionHandler: ^(id<NSSecureCoding> item, NSError *error) {
                 
-                NSData *data;
+                NSData *data = [[NSData alloc] init];
                 if([(NSObject*)item isKindOfClass:[NSURL class]]) {
                     data = [NSData dataWithContentsOfURL:(NSURL*)item];
                 }
@@ -130,19 +130,20 @@
                     suggestedName = [itemProvider valueForKey:@"suggestedName"];
                 }
 
-                NSString *uti = nil;
+                NSString *uti = @"";
+                NSArray<NSString *> *utis = [NSArray new];
                 if ([itemProvider.registeredTypeIdentifiers count] > 0) {
                     uti = itemProvider.registeredTypeIdentifiers[0];
+                    utis = itemProvider.registeredTypeIdentifiers;
                 }
                 else {
                     uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
                 }
                 NSDictionary *dict = @{
-                    @"text" : self.contentText,
                     @"backURL": self.backURL,
                     @"data" : data,
                     @"uti": uti,
-                    @"utis": itemProvider.registeredTypeIdentifiers,
+                    @"utis": utis,
                     @"name": suggestedName
                 };
                 [self.userDefaults setObject:dict forKey:@"image"];
@@ -225,7 +226,7 @@
     // Wallet - com.apple.Passbook
     // Watch - com.apple.Bridge
     // Weather - com.apple.weather
-    return nil;
+    return @"";
 }
 
 // This is called at the point where the Post dialog is about to be shown.
