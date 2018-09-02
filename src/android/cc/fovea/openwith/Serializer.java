@@ -37,6 +37,9 @@ class Serializer {
         if (items == null || items.length() == 0) {
             items = itemsFromExtras(contentResolver, intent.getExtras());
         }
+        if (items == null || items.length() == 0) {
+            items = itemsFromData(contentResolver, intent.getData());
+        }
         if (items == null) {
             return null;
         }
@@ -98,6 +101,27 @@ class Serializer {
         final JSONObject item = toJSONObject(
                 contentResolver,
                 (Uri) extras.get(Intent.EXTRA_STREAM));
+        if (item == null) {
+            return null;
+        }
+        final JSONObject[] items = new JSONObject[1];
+        items[0] = item;
+        return new JSONArray(items);
+    }
+
+    /** Extract the list of items from the intent's getData
+     *
+     * See Intent.ACTION_VIEW for details. */
+    public static JSONArray itemsFromData(
+            final ContentResolver contentResolver,
+            final Uri uri)
+            throws JSONException {
+        if (uri == null) {
+            return null;
+        }
+        final JSONObject item = toJSONObject(
+                contentResolver,
+                uri);
         if (item == null) {
             return null;
         }
