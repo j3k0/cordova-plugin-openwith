@@ -1,6 +1,6 @@
 {
   "name": "cc.fovea.cordova.openwith",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Cordova \"Open With\" plugin for iOS and Android",
   "cordova": {
     "id": "cc.fovea.cordova.openwith",
