@@ -110,26 +110,6 @@ function projectPlistJson(context, projectName) {
   return plist.parse(fs.readFileSync(path, 'utf8'));
 }
 
-function getPreferences(context, projectName) {
-  var plist = projectPlistJson(context, projectName);
-  return [{
-    key: '__DISPLAY_NAME__',
-    value: projectName
-  }, {
-    key: '__BUNDLE_IDENTIFIER__',
-    value: plist.CFBundleIdentifier + BUNDLE_SUFFIX
-  }, {
-    key: '__BUNDLE_SHORT_VERSION_STRING__',
-    value: plist.CFBundleShortVersionString
-  }, {
-    key: '__BUNDLE_VERSION__',
-    value: plist.CFBundleVersion
-  }, {
-    key: '__URL_KEY__',
-    value: plist.CFBundleIdentifier.replace(/[^a-zA-Z]/g, '').toLowerCase()
-  }];
-}
-
 // Return the list of files in the share extension project, organized by type
 function getShareExtensionFiles(context) {
   var files = {source:[],plist:[],resource:[]};
