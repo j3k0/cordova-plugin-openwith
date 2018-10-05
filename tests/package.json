@@ -1,0 +1,14 @@
+{
+    "name": "cc.fovea.cordova.openwith-tests",
+    "version": "0.1.0-dev",
+    "description": "",
+    "cordova": {
+        "id": "cc.fovea.cordova.openwith-tests",
+        "platforms": ["android", "ios"]
+    },
+    "keywords": [
+        "ecosystem:cordova"
+    ],
+    "author": "Niklas Merz",
+    "license": "MIT"
+}

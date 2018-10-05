@@ -25,11 +25,12 @@
   ],
   "scripts": {
     "test": "npm run js-lint && npm run js-test && npm run java-lint",
+    "paramedic": "npx cordova-paramedic --plugin '. --variable ANDROID_MIME_TYPE=\"image/*\" --variable IOS_URL_SCHEME=ccfoveaopenwithdemo   --variable IOS_UNIFORM_TYPE_IDENTIFIER=public.image' --platform",
     "install-dev": "./install-pmd",
     "java-lint": "pmd -minimumpriority 4 -d src/android -R java-basic,java-android,java-braces,java-codesize,java-empty,java-finalizers,java-imports,java-naming,java-optimizations,java-strictexception,java-strings,java-sunsecure,java-typeresolution,java-unnecessary,java-unusedcode -f textcolor",
     "objc-lint": "true",
     "js-lint": "eslint www",
-    "js-test": "mocha www",
+    "js-test": "mocha tests",
     "js-lint-watch": "esw --watch www",
     "js-test-watch": "mocha --watch www"
   },
@@ -42,12 +43,14 @@
   "# Dependencies required by the hooks": "",
   "dependencies": {
     "file-system": "^2.2.2",
+    "jasmine": "^3.2.0",
     "path": "^0.12.7",
     "plist": "^2.1.0",
     "xcode": "git+https://github.com/apache/cordova-node-xcode.git"
   },
   "# Dependencies required to run tests": "",
   "devDependencies": {
+    "cordova-paramedic": "git+https://github.com/NiklasMerz/cordova-paramedic.git#audit",
     "eslint": "^4.7.2",
     "eslint-config-standard": "^10.2.1",
     "eslint-plugin-import": "^2.7.0",
