@@ -85,7 +85,7 @@ SOFTWARE.
     <!-- android -->
     <platform name="android">
 
-        <preference name="ANDROID_MIME_TYPE" />
+        <preference name="ANDROID_MIME_TYPES" />
         <preference name="ANDROID_EXTRA_ACTIONS" default=" " />
 
         <js-module src="www/openwith.js" name="openwith">
@@ -96,7 +96,8 @@ SOFTWARE.
             <intent-filter>
                 <!-- category android:name="android.intent.category.BROWSABLE" / -->
                 <!-- See https://developer.android.com/guide/topics/manifest/data-element.html -->
-                <data android:mimeType="$ANDROID_MIME_TYPE" />
+                <!-- Insert mime-types using the following format: <data android:mimeType="image/*" /> -->
+                $ANDROID_MIME_TYPES
                 <action android:name="android.intent.action.SEND" />
                 $ANDROID_EXTRA_ACTIONS
                 <!-- action android:name="android.intent.action.VIEW" / -->
