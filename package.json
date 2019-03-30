@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/j3k0/cordova-plugin-openwith.git"
+    "url": "https://github.com/JochenHeizmann/cordova-plugin-openwith.git"
   },
   "keywords": [
     "ecosystem:cordova",
@@ -36,9 +36,9 @@
   "author": "Jean-Christophe Hoelt <hoelt@fovea.cc>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/j3k0/cordova-plugin-openwith/issues"
+    "url": "https://github.com/JochenHeizmann/cordova-plugin-openwith.git/issues"
   },
-  "homepage": "https://github.com/j3k0/cordova-plugin-openwith",
+  "homepage": "cordova-plugin-openwith",
   "# Dependencies required by the hooks": "",
   "dependencies": {
     "file-system": "^2.2.2",
