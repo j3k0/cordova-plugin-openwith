@@ -76,6 +76,7 @@
     "hooks/iosRemoveTarget.js",
     "hooks/iosCopyShareExtension.js",
     "hooks/npmInstall.js",
+    "hooks/utils.js",
     "install-pmd",
     "plugin.xml",
     "LICENSE",
