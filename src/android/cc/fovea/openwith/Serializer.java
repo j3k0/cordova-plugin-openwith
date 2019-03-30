@@ -81,7 +81,15 @@ class Serializer {
             final int clipItemCount = clipData.getItemCount();
             JSONObject[] items = new JSONObject[clipItemCount];
             for (int i = 0; i < clipItemCount; i++) {
-                items[i] = toJSONObject(contentResolver, clipData.getItemAt(i).getUri());
+                if (clipData.getItemAt(i).getUri() != null) {
+                    items[i] = toJSONObject(contentResolver, clipData.getItemAt(i).getUri());
+                } else if (clipData.getItemAt(i).getText() != null) {
+                    items[i] = toJSONObject(contentResolver, clipData.getItemAt(i).getText().toString());
+                } else if (clipData.getItemAt(i).getHtmlText() != null) {
+                    items[i] = toJSONObject(contentResolver, clipData.getItemAt(i).getHtmlText());
+                } else {
+                    items[i] = toJSONObject(contentResolver, clipData.getItemAt(i).toString());
+                }
             }
             return new JSONArray(items);
         }
@@ -150,6 +158,27 @@ class Serializer {
         json.put("type", type);
         json.put("uri", uri);
         json.put("path", getRealPathFromURI(contentResolver, uri));
+        return json;
+    }
+
+    /** Convert an String to JSON object.
+     *
+     * Object will include:
+     *    "type" of data;
+     *    "text" itself;
+     *    "path" to the file, if applicable.
+     *    "data" for the file.
+     */
+    public static JSONObject toJSONObject(
+            final ContentResolver contentResolver,
+            final String text)
+            throws JSONException {
+        if (text == null) {
+            return null;
+        }
+        final JSONObject json = new JSONObject();
+        json.put("type", "text/plain");
+        json.put("text", text);
         return json;
     }
 
