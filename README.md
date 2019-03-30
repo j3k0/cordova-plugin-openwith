@@ -27,6 +27,16 @@ The plugin's API mostly follows Android's terminology.
 
 Below is a short introduction to how the technology works on Android and iOS.
 
+### Note
+
+Right now the plugin doesnt work with Cordova new than 8.1.0. (Edit: Is this still true?)
+
+If you have cordova installed globally you also need to install the xcode package globally:
+
+```
+npm install -g xcode@2.0.0
+```
+
 #### Android
 
 On Android, the app defines, in its __AndroidManifest.xml__ file, the **mime type** of file types it can handle. Wildcard are accepted, so `image/*` can be used to accept all images regardless of the sub-type. The app also defines the type of actions accepted for this file types. By default, only the [SEND](https://developer.android.com/reference/android/content/Intent.html#ACTION_SEND) event is declared by the plugin. Other events that can be of interest are `SEND_MULTIPLE` and `VIEW`.
@@ -49,15 +59,63 @@ Once the data is in place in the Shared User-Preferences Container, the Share Ex
 
 On the Cordova App side, the plugin checks listens for app start or resume events. When this happens, it looks into the Shared User-Preferences Container for any content to share and report it to the javascript application.
 
+You need to config the ios app through your config.xml file, so the Entitlements and plist settings are generated correctly through cordova. For example, to do this, add in the ios platform section:
+
+```
+<config-file mode="add" parent="NSExtension" platform="ios" target="ShareExtension/*-Info.plist">
+    <dict>
+        <key>NSExtensionAttributes</key>
+        <dict>
+            <key>NSExtensionActivationRule</key>
+            <dict>
+                <key>NSExtensionActivationUsesStrictMatching</key>
+                <integer>0</integer>
+                <key>NSExtensionActivationDictionaryVersion</key>
+                <integer>2</integer>
+                <key>NSExtensionActivationSupportsAttachmentsWithMaxCount</key>
+                <integer>1</integer>
+                <key>NSExtensionActivationSupportsFileWithMaxCount</key>
+                <integer>1</integer>
+                <key>NSExtensionActivationSupportsImageWithMaxCount</key>
+                <integer>1</integer>
+                <key>NSExtensionActivationSupportsMovieWithMaxCount</key>
+                <integer>1</integer>
+                <key>NSExtensionActivationSupportsText</key>
+                <true />
+                <key>NSExtensionActivationSupportsWebURLWithMaxCount</key>
+                <integer>1</integer>
+                <key>NSExtensionActivationSupportsWebPageWithMaxCount</key>
+                <integer>1</integer>
+            </dict>
+        </dict>
+        <key>NSExtensionMainStoryboard</key>
+        <string>MainInterface</string>
+        <key>NSExtensionPointIdentifier</key>
+        <string>com.apple.share-services</string>
+    </dict>
+</config-file>
+<config-file mode="add" parent="com.apple.security.application-groups" platform="ios" target="Neo/Entitlements-Release.plist">
+    <array>
+        <string>group.imw.com.xxx.yyy.shareextension</string>
+    </array>
+</config-file>
+<config-file mode="add" parent="com.apple.security.application-groups" platform="ios" target="Neo/Entitlements-Debug.plist">
+    <array>
+        <string>group.imw.com.xxx.yyy.shareextension</string>
+    </array>
+</config-file>
+```
+
 ## Installation
 
 Here's the promised one liner:
 
 ```
-cordova plugin add cc.fovea.cordova.openwith \
-  --variable ANDROID_MIME_TYPE="image/*" \
-  --variable IOS_URL_SCHEME=ccfoveaopenwithdemo \
-  --variable IOS_UNIFORM_TYPE_IDENTIFIER=public.image
+cordova plugin add https://github.com/JochenHeizmann/cordova-plugin-openwith.git \
+  --variable ANDROID_MIME_TYPE="text/plain" \
+  --variable IOS_URL_SCHEME=xxx \
+  --variable IOS_UNIFORM_TYPE_IDENTIFIER=public.plain-text \
+  --variable IOS_BUNDLE_IDENTIFIER=com.xxx.yyy
 ```
 
 | variable | example | notes |
@@ -73,20 +131,7 @@ It shouldn't be too hard. But just in case, I [posted a screencast of it](https:
 
 ### iOS Setup
 
-After having installed the plugin, with the ios platform in place, 1 operation needs to be done manually: setup the App Group on both the Cordova App and the Share Extension.
-
- 1. open the **xcodeproject** for your application
- 1. select the root element of your **project navigator** (the left-side pane)
- 1. select the **target** of your application
- 1. select **capabilities**
- 1. scroll down to **App Groups**
- 1. make sure it's **ON**
- 1. create and activate an **App Group** called: `group.<YOUR_APP_BUNDLE_ID>.shareextension`
- 1. repeat the previous five steps for the **ShareExtension target**.
-
-You might also have to select a Team for both the App and Share Extension targets, make sure to select the same.
-
-Build, XCode might complain about a few things to setup that it will fix for you (creation entitlements files, etc).
+After having installed the plugin, with the ios platform in place, 1 operation needs to be done manually: Register the APP Group in you developer portal, the app group is called **App Group** called: `group.<YOUR_APP_BUNDLE_ID>.shareextension`
 
 ### Advanced installation options
 
