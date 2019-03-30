@@ -75,8 +75,8 @@ SOFTWARE.
         </config-file>
 
         <hook type="before_plugin_install" src="hooks/npmInstall.js" />
-        <hook type="before_plugin_install" src="hooks/iosCopyShareExtension.js" />
-        <hook type="after_plugin_install" src="hooks/iosAddTarget.js" />
+        <hook type="after_platform_add" src="hooks/iosCopyShareExtension.js" />
+        <hook type="after_platform_add" src="hooks/iosAddTarget.js" />
         <hook type="before_plugin_uninstall" src="hooks/iosRemoveTarget.js" />
 
         <framework src="MobileCoreServices.framework" />
