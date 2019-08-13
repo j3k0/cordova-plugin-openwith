@@ -74,7 +74,7 @@ function iosFolder(context) {
 }
 
 function parsePbxProject(context, pbxProjectPath) {
-  var xcode = context.requireCordovaModule('xcode');
+  var xcode = require('xcode');
   console.log('    Parsing existing project at location: ' + pbxProjectPath + '...');
   var pbxProject;
   if (context.opts.cordova.project) {
@@ -125,7 +125,7 @@ console.log('Removing target "' + PLUGIN_ID + '/ShareExtension" to XCode project
 
 module.exports = function (context) {
 
-  var Q = context.requireCordovaModule('q');
+  var Q = require('q');
   var deferral = new Q.defer();
 
   findXCodeproject(context, function(projectFolder, projectName) {
