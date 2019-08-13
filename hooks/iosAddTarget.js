@@ -107,13 +107,13 @@ function getCordovaParameter(configXml, variableName) {
 
 // Get the bundle id from config.xml
 // function getBundleId(context, configXml) {
-//   var elementTree = context.requireCordovaModule('elementtree');
+//   var elementTree = require('elementtree');
 //   var etree = elementTree.parse(configXml);
 //   return etree.getroot().get('id');
 // }
 
 function parsePbxProject(context, pbxProjectPath) {
-  var xcode = context.requireCordovaModule('xcode');
+  var xcode = require('xcode');
   console.log('    Parsing existing project at location: ' + pbxProjectPath + '...');
   var pbxProject;
   if (context.opts.cordova.project) {
@@ -212,7 +212,7 @@ console.log('Adding target "' + PLUGIN_ID + '/ShareExtension" to XCode project')
 
 module.exports = function (context) {
 
-  var Q = context.requireCordovaModule('q');
+  var Q = require('q');
   var deferral = new Q.defer();
 
   // if (context.opts.cordova.platforms.indexOf('ios') < 0) {

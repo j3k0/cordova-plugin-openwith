@@ -21,8 +21,8 @@
 const PLUGIN_ID = "cc.fovea.cordova.openwith";
 
 module.exports = function (context) {
-    var child_process = context.requireCordovaModule('child_process');
-    var deferral = context.requireCordovaModule('q').defer();
+    var child_process = require('child_process');
+    var deferral = require('q').defer();
 
     console.log('Installing "' + PLUGIN_ID + '" dependencies');
     child_process.exec('npm install --production', {cwd:__dirname}, function (error) {
