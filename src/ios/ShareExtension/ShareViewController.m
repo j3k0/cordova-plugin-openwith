@@ -88,7 +88,8 @@
             NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:methodSignature];
 
             // Arguments
-            NSDictionary<NSString *, id> *options = [NSDictionary dictionary];
+            UISceneOpenExternalURLOptions * options = [UISceneOpenExternalURLOptions alloc];
+            options.universalLinksOnly = false;
             void (^completion)(BOOL success) = ^void(BOOL success) {
                 NSLog(@"Completions block: %i", success);
             };
