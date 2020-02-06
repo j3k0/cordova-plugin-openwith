@@ -57,7 +57,8 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint-watch": "^3.1.2",
     "expect.js": "^0.3.1",
-    "mocha": "^3.5.3"
+    "mocha": "^3.5.3",
+    "q": "^1.5.1"
   },
   "# White list the files to pack by npm publish": "",
   "files": [
