@@ -34,6 +34,7 @@ const BUNDLE_SUFFIX = '.shareextension';
 
 var fs = require('fs');
 var path = require('path');
+var packageJson;
 
 function redError(message) {
     return new Error('"' + PLUGIN_ID + '" \x1b[1m\x1b[31m' + message + '\x1b[0m');
@@ -93,13 +94,8 @@ function getPreferenceValue(configXml, name) {
 }
 
 function getCordovaParameter(configXml, variableName) {
-  var variable;
-  var arg = process.argv.filter(function(arg) {
-    return arg.indexOf(variableName + '=') == 0;
-  });
-  if (arg.length >= 1) {
-    variable = arg[0].split('=')[1];
-  } else {
+  var variable = packageJson.cordova.plugins[PLUGIN_ID][variableName];
+  if (!variable) {
     variable = getPreferenceValue(configXml, variableName);
   }
   return variable;
@@ -215,6 +211,8 @@ module.exports = function (context) {
   var Q = require('q');
   var deferral = new Q.defer();
 
+  packageJson = require(path.join(context.opts.projectRoot, 'package.json'));
+
   // if (context.opts.cordova.platforms.indexOf('ios') < 0) {
   //   log('You have to add the ios platform before adding this plugin!', 'error');
   // }
@@ -249,7 +247,7 @@ module.exports = function (context) {
     if (!target) {
       // Add PBXNativeTarget to the project
       target = pbxProject.addTarget('ShareExt', 'app_extension', 'ShareExtension');
-      
+
       // Add a new PBXSourcesBuildPhase for our ShareViewController
       // (we can't add it to the existing one because an extension is kind of an extra app)
       pbxProject.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', target.uuid);
