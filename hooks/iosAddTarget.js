@@ -157,7 +157,7 @@ function getPreferences(context, configXml, projectName) {
     value: projectName
   }, {
     key: '__BUNDLE_IDENTIFIER__',
-    value: plist.CFBundleIdentifier + BUNDLE_SUFFIX
+    value: bundleIdentifier + BUNDLE_SUFFIX
   } ,{
       key: '__GROUP_IDENTIFIER__',
       value: group
