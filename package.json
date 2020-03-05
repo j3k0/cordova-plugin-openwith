@@ -67,6 +67,7 @@
     "src/android/cc/fovea/openwith/Serializer.java",
     "src/ios/OpenWithPlugin.m",
     "src/ios/ShareExtension/MainInterface.storyboard",
+    "src/ios/ShareExtension/ShareExtension-Entitlements.plist",
     "src/ios/ShareExtension/ShareExtension-Info.plist",
     "src/ios/ShareExtension/ShareViewController.h",
     "src/ios/ShareExtension/ShareViewController.m",
