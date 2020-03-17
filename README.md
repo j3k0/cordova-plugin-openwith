@@ -71,23 +71,6 @@ cordova plugin add cc.fovea.cordova.openwith \
 
 It shouldn't be too hard. But just in case, I [posted a screencast of it](https://youtu.be/eaE4m_xO1mg).
 
-### iOS Setup
-
-After having installed the plugin, with the ios platform in place, 1 operation needs to be done manually: setup the App Group on both the Cordova App and the Share Extension.
-
- 1. open the **xcodeproject** for your application
- 1. select the root element of your **project navigator** (the left-side pane)
- 1. select the **target** of your application
- 1. select **capabilities**
- 1. scroll down to **App Groups**
- 1. make sure it's **ON**
- 1. create and activate an **App Group** called: `group.<YOUR_APP_BUNDLE_ID>.shareextension`
- 1. repeat the previous five steps for the **ShareExtension target**.
-
-You might also have to select a Team for both the App and Share Extension targets, make sure to select the same.
-
-Build, XCode might complain about a few things to setup that it will fix for you (creation entitlements files, etc).
-
 ### Advanced installation options
 
 If you do not need anything fancy, you can skip this section.

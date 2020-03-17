@@ -34,6 +34,8 @@ const BUNDLE_SUFFIX = '.shareextension';
 
 var fs = require('fs');
 var path = require('path');
+var packageJson;
+var bundleIdentifier;
 
 function redError(message) {
     return new Error('"' + PLUGIN_ID + '" \x1b[1m\x1b[31m' + message + '\x1b[0m');
@@ -93,24 +95,19 @@ function getPreferenceValue(configXml, name) {
 }
 
 function getCordovaParameter(configXml, variableName) {
-  var variable;
-  var arg = process.argv.filter(function(arg) {
-    return arg.indexOf(variableName + '=') == 0;
-  });
-  if (arg.length >= 1) {
-    variable = arg[0].split('=')[1];
-  } else {
+  var variable = packageJson.cordova.plugins[PLUGIN_ID][variableName];
+  if (!variable) {
     variable = getPreferenceValue(configXml, variableName);
   }
   return variable;
 }
 
 // Get the bundle id from config.xml
-// function getBundleId(context, configXml) {
-//   var elementTree = require('elementtree');
-//   var etree = elementTree.parse(configXml);
-//   return etree.getroot().get('id');
-// }
+function getBundleId(context, configXml) {
+  var elementTree = require('elementtree');
+  var etree = elementTree.parse(configXml);
+  return etree.getroot().get('id');
+}
 
 function parsePbxProject(context, pbxProjectPath) {
   var xcode = require('xcode');
@@ -151,8 +148,8 @@ function projectPlistJson(context, projectName) {
 
 function getPreferences(context, configXml, projectName) {
   var plist = projectPlistJson(context, projectName);
-  var group = "group." + plist.CFBundleIdentifier + BUNDLE_SUFFIX;
-  if (getCordovaParameter(configXml, 'GROUP_IDENTIFIER') !== "") {
+  var group = "group." + bundleIdentifier + BUNDLE_SUFFIX;
+  if (getCordovaParameter(configXml, 'IOS_GROUP_IDENTIFIER')) {
     group = getCordovaParameter(configXml, 'IOS_GROUP_IDENTIFIER');
   }
   return [{
@@ -160,7 +157,7 @@ function getPreferences(context, configXml, projectName) {
     value: projectName
   }, {
     key: '__BUNDLE_IDENTIFIER__',
-    value: plist.CFBundleIdentifier + BUNDLE_SUFFIX
+    value: bundleIdentifier + BUNDLE_SUFFIX
   } ,{
       key: '__GROUP_IDENTIFIER__',
       value: group
@@ -215,6 +212,8 @@ module.exports = function (context) {
   var Q = require('q');
   var deferral = new Q.defer();
 
+  packageJson = require(path.join(context.opts.projectRoot, 'package.json'));
+
   // if (context.opts.cordova.platforms.indexOf('ios') < 0) {
   //   log('You have to add the ios platform before adding this plugin!', 'error');
   // }
@@ -223,6 +222,8 @@ module.exports = function (context) {
   if (configXml) {
     configXml = configXml.substring(configXml.indexOf('<'));
   }
+
+  bundleIdentifier = getBundleId(context, configXml);
 
   findXCodeproject(context, function(projectFolder, projectName) {
 
@@ -241,7 +242,7 @@ module.exports = function (context) {
     });
 
     // Find if the project already contains the target and group
-    var target = pbxProject.pbxTargetByName('ShareExt');
+    var target = pbxProject.pbxTargetByName('ShareExt') || pbxProject.pbxTargetByName('"ShareExt"');
     if (target) {
       console.log('    ShareExt target already exists.');
     }
@@ -249,7 +250,7 @@ module.exports = function (context) {
     if (!target) {
       // Add PBXNativeTarget to the project
       target = pbxProject.addTarget('ShareExt', 'app_extension', 'ShareExtension');
-      
+
       // Add a new PBXSourcesBuildPhase for our ShareViewController
       // (we can't add it to the existing one because an extension is kind of an extra app)
       pbxProject.addBuildPhase([], 'PBXSourcesBuildPhase', 'Sources', target.uuid);
@@ -261,7 +262,7 @@ module.exports = function (context) {
 
     // Create a separate PBXGroup for the shareExtensions files, name has to be unique and path must be in quotation marks
     var pbxGroupKey = pbxProject.findPBXGroupKey({name: 'ShareExtension'});
-    if (pbxProject) {
+    if (pbxGroupKey) {
       console.log('    ShareExtension group already exists.');
     }
     if (!pbxGroupKey) {
@@ -286,6 +287,20 @@ module.exports = function (context) {
     files.resource.forEach(function(file) {
       pbxProject.addResourceFile(file.name, {target: target.uuid}, pbxGroupKey);
     });
+
+    var configurations = pbxProject.pbxXCBuildConfigurationSection();
+    for (var key in configurations) {
+      if (typeof configurations[key].buildSettings !== 'undefined') {
+        var buildSettingsObj = configurations[key].buildSettings;
+        if (typeof buildSettingsObj['PRODUCT_NAME'] !== 'undefined') {
+          buildSettingsObj['CODE_SIGN_ENTITLEMENTS'] = '"ShareExtension/ShareExtension-Entitlements.plist"';
+          var productName = buildSettingsObj['PRODUCT_NAME'];
+          if (productName.indexOf('ShareExt') >= 0) {
+            buildSettingsObj['PRODUCT_BUNDLE_IDENTIFIER'] = bundleIdentifier+BUNDLE_SUFFIX;
+          }
+        }
+      }
+    }
 
     //Add development team and provisioning profile
     var PROVISIONING_PROFILE = getCordovaParameter(configXml, 'SHAREEXT_PROVISIONING_PROFILE');
