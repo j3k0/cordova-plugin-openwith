@@ -1,12 +1,11 @@
 {
-  "name": "cc.fovea.cordova.openwith",
+  "name": "cc.fovea.cordova.openwith.android",
   "version": "2.0.0",
   "description": "Cordova \"Open With\" plugin for iOS and Android",
   "cordova": {
-    "id": "cc.fovea.cordova.openwith",
+    "id": "cc.fovea.cordova.openwith.android",
     "platforms": [
-      "android",
-      "ios"
+      "android"
     ]
   },
   "repository": {
@@ -16,11 +15,9 @@
   "keywords": [
     "ecosystem:cordova",
     "cordova-android",
-    "cordova-ios",
     "cordova",
     "phonegap",
     "openwith",
-    "ios",
     "android"
   ],
   "scripts": {
@@ -65,18 +62,8 @@
     "src/android/cc/fovea/openwith/OpenWithPlugin.java",
     "src/android/cc/fovea/openwith/PluginResultSender.java",
     "src/android/cc/fovea/openwith/Serializer.java",
-    "src/ios/OpenWithPlugin.m",
-    "src/ios/ShareExtension/MainInterface.storyboard",
-    "src/ios/ShareExtension/ShareExtension-Entitlements.plist",
-    "src/ios/ShareExtension/ShareExtension-Info.plist",
-    "src/ios/ShareExtension/ShareViewController.h",
-    "src/ios/ShareExtension/ShareViewController.m",
     "www/openwith.js",
     "www/test-openwith.js",
-    "hooks/iosAddTarget.js",
-    "hooks/iosRemoveTarget.js",
-    "hooks/iosCopyShareExtension.js",
-    "hooks/npmInstall.js",
     "install-pmd",
     "plugin.xml",
     "LICENSE",
