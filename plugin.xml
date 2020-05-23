@@ -25,11 +25,11 @@ SOFTWARE.
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cc.fovea.cordova.openwith"
+    id="cc.fovea.cordova.openwith.android"
     version="2.0.0">
 
     <name>OpenWith</name>
-	<description>Cordova "Open With" plugin for iOS and Android</description>
+	<description>Cordova "Open With" plugin for Android</description>
     <engines>
         <engine name="cordova" version=">=6.0.0" />
     </engines>
@@ -37,50 +37,7 @@ SOFTWARE.
     <issue>https://github.com/j3k0/cordova-plugin-openwith/issues</issue>
 
 	<license>MIT</license>
-    <keywords>cordova,phonegap,openwith,ios,android</keywords>
-
-    <!-- ios -->
-    <platform name="ios">
-        <preference name="IOS_URL_SCHEME" />
-        <preference name="IOS_UNIFORM_TYPE_IDENTIFIER" />
-
-        <js-module src="www/openwith.js" name="openwith">
-            <clobbers target="cordova.openwith" />
-        </js-module>
-
-        <!-- Cordova 2.2 -->
-        <plugins-plist key="OpenWith" string="OpenWith" />
-
-        <!-- Cordova 2.5+ -->
-        <config-file target="config.xml" parent="/*">
-            <feature name="OpenWithPlugin">
-                <param name="ios-package" value="OpenWithPlugin" />
-                <param name="onload" value="true" />
-            </feature>
-        </config-file>
-
-        <source-file src="src/ios/OpenWithPlugin.m" />
-
-        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
-            <array>
-                <dict>
-                    <key>CFBundleURLName</key>
-                    <string>cc.fovea.openwith.$IOS_URL_SCHEME.shareextension</string>
-                    <key>CFBundleURLSchemes</key>
-                    <array>
-                        <string>$IOS_URL_SCHEME</string>
-                    </array>
-                </dict>
-            </array>
-        </config-file>
-
-        <hook type="before_plugin_install" src="hooks/npmInstall.js" />
-        <hook type="before_prepare" src="hooks/iosCopyShareExtension.js" />
-        <hook type="after_prepare" src="hooks/iosAddTarget.js" />
-        <hook type="before_plugin_uninstall" src="hooks/iosRemoveTarget.js" />
-
-        <framework src="MobileCoreServices.framework" />
-    </platform>
+    <keywords>cordova,phonegap,openwith,android</keywords>
 
     <!-- android -->
     <platform name="android">
@@ -109,7 +66,7 @@ SOFTWARE.
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="OpenWithPlugin">
 				<param name="android-package" value="cc.fovea.openwith.OpenWithPlugin"/>
-			</feature>
+            </feature>
             <preference name="AndroidLaunchMode" value="singleTask"/>
         </config-file>
 
