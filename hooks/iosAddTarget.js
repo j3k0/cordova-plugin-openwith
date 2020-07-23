@@ -124,6 +124,10 @@ function parsePbxProject(context, pbxProjectPath) {
 
 function forEachShareExtensionFile(context, callback) {
   var shareExtensionFolder = path.join(iosFolder(context), 'ShareExtension');
+  if (!fs.exists(shareExtensionFolder)) {
+    console.error('!!  Shared extension files have not been copied yet!!');
+    return;
+  }
   fs.readdirSync(shareExtensionFolder).forEach(function(name) {
     // Ignore junk files like .DS_Store
     if (!/^\..*/.test(name)) {
