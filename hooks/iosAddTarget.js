@@ -321,7 +321,7 @@ module.exports = function (context) {
               buildSettingsObj['PROVISIONING_PROFILE'] = PROVISIONING_PROFILE;
               buildSettingsObj['DEVELOPMENT_TEAM'] = DEVELOPMENT_TEAM;
               buildSettingsObj['CODE_SIGN_STYLE'] = 'Manual';
-              buildSettingsObj['CODE_SIGN_IDENTITY'] = 'iPhone Distribution';
+              buildSettingsObj['CODE_SIGN_IDENTITY'] = '"iPhone Distribution"';
               console.log('Added signing identities for extension!');
             }
           }
