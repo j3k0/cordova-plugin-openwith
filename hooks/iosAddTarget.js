@@ -320,6 +320,8 @@ module.exports = function (context) {
             if (productName.indexOf('ShareExt') >= 0) {
               buildSettingsObj['PROVISIONING_PROFILE'] = PROVISIONING_PROFILE;
               buildSettingsObj['DEVELOPMENT_TEAM'] = DEVELOPMENT_TEAM;
+              buildSettingsObj['CODE_SIGN_STYLE'] = 'Manual';
+              buildSettingsObj['CODE_SIGN_IDENTITY'] = 'iPhone Distribution';
               console.log('Added signing identities for extension!');
             }
           }
