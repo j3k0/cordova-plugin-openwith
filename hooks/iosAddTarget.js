@@ -124,6 +124,10 @@ function parsePbxProject(context, pbxProjectPath) {
 
 function forEachShareExtensionFile(context, callback) {
   var shareExtensionFolder = path.join(iosFolder(context), 'ShareExtension');
+  if (!fs.existsSync(shareExtensionFolder)) {
+    console.error('!!  Shared extension files have not been copied yet!!');
+    return;
+  }
   fs.readdirSync(shareExtensionFolder).forEach(function(name) {
     // Ignore junk files like .DS_Store
     if (!/^\..*/.test(name)) {
@@ -316,6 +320,8 @@ module.exports = function (context) {
             if (productName.indexOf('ShareExt') >= 0) {
               buildSettingsObj['PROVISIONING_PROFILE'] = PROVISIONING_PROFILE;
               buildSettingsObj['DEVELOPMENT_TEAM'] = DEVELOPMENT_TEAM;
+              buildSettingsObj['CODE_SIGN_STYLE'] = 'Manual';
+              buildSettingsObj['CODE_SIGN_IDENTITY'] = '"iPhone Distribution"';
               console.log('Added signing identities for extension!');
             }
           }
