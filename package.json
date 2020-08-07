@@ -1,6 +1,6 @@
 {
   "name": "cc.fovea.cordova.openwith",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Cordova \"Open With\" plugin for iOS and Android",
   "cordova": {
     "id": "cc.fovea.cordova.openwith",
@@ -57,7 +57,8 @@
     "eslint-plugin-standard": "^3.0.1",
     "eslint-watch": "^3.1.2",
     "expect.js": "^0.3.1",
-    "mocha": "^3.5.3"
+    "mocha": "^3.5.3",
+    "q": "^1.5.1"
   },
   "# White list the files to pack by npm publish": "",
   "files": [
