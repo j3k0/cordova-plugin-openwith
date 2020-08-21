@@ -209,6 +209,16 @@ public class OpenWithPlugin extends CordovaPlugin {
     @Override
     public void onNewIntent(final Intent intent) {
         log(DEBUG, "onNewIntent() " + intent.getAction());
+        /**
+         * If the activity is not the task root, start a new
+         * activity and close this one. By doing this, we
+         * enforce the app to run as a singleTask
+         */
+        if (!cordova.getActivity().isTaskRoot()) {
+          cordova.getActivity().startActivity(intent);
+          cordova.getActivity().finish();
+          return;
+        }
         final JSONObject json = toJSONObject(intent);
         if (json != null) {
             pendingIntents.add(json);
