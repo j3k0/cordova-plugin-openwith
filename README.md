@@ -94,6 +94,17 @@ To specify more than one extra action, just put them all in the `ANDROID_EXTRA_A
 MY_EXTRA_ACTIONS='<action ... /><action ... />'
 ```
 
+Use the `ANDROID_EXTRA_DATATAGS` to add data tags (e.g. with filename patterns - replace "xxx" with the desired file suffix).
+
+```
+cordova plugin add cc.fovea.cordova.openwith \
+  --variable ANDROID_MIME_TYPE="image/*" \
+  --variable ANDROID_EXTRA_DATATAGS="<data android:pathPattern=".*\\.xxx" />"
+```
+
+To specify more than one extra data tag, just put them all in the `ANDROID_EXTRA_DATATAGS`.
+
+
 ## Usage
 
 ```js
