@@ -103,7 +103,7 @@ SOFTWARE.
                 <action android:name="android.intent.action.SEND" />
                 $ANDROID_EXTRA_ACTIONS
                 <!-- action android:name="android.intent.action.VIEW" / -->
-                <!-- action android:name="android.intent.action.SEND_MULTIPLE" / -->
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </config-file>
