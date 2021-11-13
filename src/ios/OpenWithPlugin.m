@@ -179,6 +179,17 @@ static NSDictionary* launchOptions = nil;
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void) setDialog:(CDVInvokedUrlCommand*)command {
+    NSNumber *value = [command argumentAtIndex:0
+                                   withDefault:[NSNumber numberWithInt: VERBOSITY_INFO]
+                                      andClass:[NSNumber class]];
+    [self.userDefaults setBool:value.boolValue forKey:@"openDialog"];
+    [self.userDefaults synchronize];
+    [self debug:[NSString stringWithFormat:@"[openDialog] %d", value.boolValue]];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
 - (void) setLogger:(CDVInvokedUrlCommand*)command {
     self.loggerCallback = command.callbackId;
     [self debug:[NSString stringWithFormat:@"[setLogger] %@", self.loggerCallback]];
@@ -228,10 +239,11 @@ static NSDictionary* launchOptions = nil;
     }
     NSDictionary *dict = (NSDictionary*)object;
     NSData *data = dict[@"data"];
+    NSString *text = dict[@"text"];
     NSString *name = dict[@"name"];
     self.backURL = dict[@"backURL"];
     NSString *type = [self mimeTypeFromUti:dict[@"uti"]];
-    if (![data isKindOfClass:NSData.class]) {
+    if (![data isKindOfClass:NSData.class] || ![text isKindOfClass:NSString.class]) {
         [self debug:@"[checkForFileToShare] Data content is invalid"];
         return;
     }
@@ -245,7 +257,8 @@ static NSDictionary* launchOptions = nil;
 
     // Send to javascript
     [self debug:[NSString stringWithFormat:
-                 @"[checkForFileToShare] Sharing a %lu bytes image", (unsigned long)data.length]];
+            @"[checkForFileToShare] Sharing text \"%@\" and a %d bytes image",
+            text, data.length]];
 
     NSString *uri = [NSString stringWithFormat: @"shareextension://index=0,name=%@,type=%@",
         name, type];
@@ -253,6 +266,7 @@ static NSDictionary* launchOptions = nil;
         @"action": @"SEND",
         @"exit": @YES,
         @"items": @[@{
+            @"text" : text,
             @"base64": [data convertToBase64],
             @"type": type,
             @"utis": utis,

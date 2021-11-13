@@ -37,6 +37,7 @@
     NSString *_backURL;
 }
 @property (nonatomic) int verbosityLevel;
+@property (nonatomic) bool openDialog;
 @property (nonatomic,retain) NSUserDefaults *userDefaults;
 @property (nonatomic,retain) NSString *backURL;
 @end
@@ -76,6 +77,7 @@
 - (void) setup {
     self.userDefaults = [[NSUserDefaults alloc] initWithSuiteName:SHAREEXT_GROUP_IDENTIFIER];
     self.verbosityLevel = [self.userDefaults integerForKey:@"verbosityLevel"];
+    self.openDialog = [self.userDefaults integerForKey:@"openDialog"];
     [self debug:@"[setup]"];
 }
 

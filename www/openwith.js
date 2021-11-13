@@ -220,6 +220,12 @@ function initOpenwithPlugin (root) {
     cordova.exec(initSuccess, initError, PLUGIN_NAME, 'init', [])
   }
 
+  // open native dialog or not
+  openwith.setDialog = function (value) {
+    log(DEBUG, 'setDialog()')
+    cordova.exec(null, null, PLUGIN_NAME, 'setDialog', [value])
+  }
+
   return openwith
 }
 
