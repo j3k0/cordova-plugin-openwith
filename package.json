@@ -1,9 +1,9 @@
 {
-  "name": "cc.fovea.cordova.openwith",
-  "version": "2.1.0",
+  "name": "mtc.txt.cordova.openwith",
+  "version": "1.0.0",
   "description": "Cordova \"Open With\" plugin for iOS and Android",
   "cordova": {
-    "id": "cc.fovea.cordova.openwith",
+    "id": "mtc.txt.cordova.openwith",
     "platforms": [
       "android",
       "ios"
@@ -33,12 +33,9 @@
     "js-lint-watch": "esw --watch www",
     "js-test-watch": "mocha --watch www"
   },
-  "author": "Jean-Christophe Hoelt <hoelt@fovea.cc>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/j3k0/cordova-plugin-openwith/issues"
-  },
-  "homepage": "https://github.com/j3k0/cordova-plugin-openwith",
+  "author": "(Original) Jean-Christophe Hoelt <hoelt@fovea.cc>",
+  "license": "(Original)MIT",
+  "homepage": "https://github.com/azpalomin/cordova-plugin-openwith.git",
   "# Dependencies required by the hooks": "",
   "dependencies": {
     "file-system": "^2.2.2",
@@ -61,10 +58,10 @@
   },
   "# White list the files to pack by npm publish": "",
   "files": [
-    "src/android/cc/fovea/openwith/ByteStreams.java",
-    "src/android/cc/fovea/openwith/OpenWithPlugin.java",
-    "src/android/cc/fovea/openwith/PluginResultSender.java",
-    "src/android/cc/fovea/openwith/Serializer.java",
+    "src/android/mtc/txt/openwith/ByteStreams.java",
+    "src/android/mtc/txt/openwith/OpenWithPlugin.java",
+    "src/android/mtc/txt/openwith/PluginResultSender.java",
+    "src/android/mtc/txt/openwith/Serializer.java",
     "src/ios/OpenWithPlugin.m",
     "src/ios/ShareExtension/MainInterface.storyboard",
     "src/ios/ShareExtension/ShareExtension-Entitlements.plist",

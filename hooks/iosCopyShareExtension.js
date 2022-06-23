@@ -31,7 +31,7 @@
 
 var fs = require('fs');
 var path = require('path');
-const PLUGIN_ID = "cc.fovea.cordova.openwith";
+const PLUGIN_ID = "mtc.txt.cordova.openwith";
 
 function redError(message) {
     return new Error('"' + PLUGIN_ID + '" \x1b[1m\x1b[31m' + message + '\x1b[0m');

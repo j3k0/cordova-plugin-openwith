@@ -1,4 +1,4 @@
-package cc.fovea.openwith;
+package mtc.txt.openwith;
 
 import android.content.ClipData;
 import android.content.ContentResolver;

@@ -25,8 +25,8 @@ SOFTWARE.
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="cc.fovea.cordova.openwith"
-    version="2.1.0">
+    id="mtc.txt.cordova.openwith"
+    version="1.0.0">
 
     <name>OpenWith</name>
 	<description>Cordova "Open With" plugin for iOS and Android</description>
@@ -34,7 +34,6 @@ SOFTWARE.
         <engine name="cordova" version=">=6.0.0" />
     </engines>
     <repo>https://github.com/azpalomin/cordova-plugin-openwith.git</repo>
-    <issue>https://github.com/j3k0/cordova-plugin-openwith/issues</issue>
 
 	<license>MIT</license>
     <keywords>cordova,phonegap,openwith,ios,android</keywords>
@@ -65,7 +64,7 @@ SOFTWARE.
             <array>
                 <dict>
                     <key>CFBundleURLName</key>
-                    <string>cc.fovea.openwith.$IOS_URL_SCHEME.shareextension</string>
+                    <string>mtc.txt.openwith.$IOS_URL_SCHEME.shareextension</string>
                     <key>CFBundleURLSchemes</key>
                     <array>
                         <string>$IOS_URL_SCHEME</string>
@@ -109,16 +108,16 @@ SOFTWARE.
         <!-- Cordova >= 3.0.0 -->
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="OpenWithPlugin">
-				<param name="android-package" value="cc.fovea.openwith.OpenWithPlugin"/>
+				<param name="android-package" value="mtc.txt.openwith.OpenWithPlugin"/>
 			</feature>
             <preference name="AndroidLaunchMode" value="singleTask"/>
         </config-file>
 
         <!-- cordova plugin src files -->
-        <source-file src="src/android/cc/fovea/openwith/OpenWithPlugin.java" target-dir="src/cc/fovea/openwith" />
-        <source-file src="src/android/cc/fovea/openwith/PluginResultSender.java" target-dir="src/cc/fovea/openwith" />
-        <source-file src="src/android/cc/fovea/openwith/Serializer.java" target-dir="src/cc/fovea/openwith" />
-        <source-file src="src/android/cc/fovea/openwith/ByteStreams.java" target-dir="src/cc/fovea/openwith" />
+        <source-file src="src/android/mtc/txt/openwith/OpenWithPlugin.java" target-dir="src/mtc/txt/openwith" />
+        <source-file src="src/android/mtc/txt/openwith/PluginResultSender.java" target-dir="src/mtc/txt/openwith" />
+        <source-file src="src/android/mtc/txt/openwith/Serializer.java" target-dir="src/mtc/txt/openwith" />
+        <source-file src="src/android/mtc/txt/openwith/ByteStreams.java" target-dir="src/mtc/txt/openwith" />
     </platform>
 
 <!--
