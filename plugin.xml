@@ -33,7 +33,7 @@ SOFTWARE.
     <engines>
         <engine name="cordova" version=">=6.0.0" />
     </engines>
-    <repo>https://github.com/j3k0/cordova-plugin-openwith.git</repo>
+    <repo>https://github.com/azpalomin/cordova-plugin-openwith.git</repo>
     <issue>https://github.com/j3k0/cordova-plugin-openwith/issues</issue>
 
 	<license>MIT</license>
