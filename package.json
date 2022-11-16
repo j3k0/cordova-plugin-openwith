@@ -1,6 +1,6 @@
 {
   "name": "mtc.txt.cordova.openwith",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Cordova \"Open With\" plugin for iOS and Android",
   "cordova": {
     "id": "mtc.txt.cordova.openwith",
