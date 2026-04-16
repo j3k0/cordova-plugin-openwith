@@ -297,9 +297,12 @@ module.exports = function (context) {
       if (typeof configurations[key].buildSettings !== 'undefined') {
         var buildSettingsObj = configurations[key].buildSettings;
         if (typeof buildSettingsObj['PRODUCT_NAME'] !== 'undefined') {
-          buildSettingsObj['CODE_SIGN_ENTITLEMENTS'] = '"ShareExtension/ShareExtension-Entitlements.plist"';
           var productName = buildSettingsObj['PRODUCT_NAME'];
+          // Only patch the ShareExt target. Previously CODE_SIGN_ENTITLEMENTS
+          // was assigned unconditionally, which clobbered the main app's
+          // entitlements (push, associated domains, keychain sharing, ...).
           if (productName.indexOf('ShareExt') >= 0) {
+            buildSettingsObj['CODE_SIGN_ENTITLEMENTS'] = '"ShareExtension/ShareExtension-Entitlements.plist"';
             buildSettingsObj['PRODUCT_BUNDLE_IDENTIFIER'] = bundleIdentifier+BUNDLE_SUFFIX;
           }
         }
