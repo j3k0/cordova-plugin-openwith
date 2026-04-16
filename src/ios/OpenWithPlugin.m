@@ -137,6 +137,15 @@ static NSDictionary* launchOptions = nil;
 
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
+
+    // Also wake on DidBecomeActive and on Cordova's openURL notification.
+    // Without these, the host app never picks up a fresh share when:
+    //   - it was already foregrounded when the user hit Post (#94), or
+    //   - it is brought forward via the ShareExt URL scheme while the OS
+    //     does not fire WillEnterForeground (#106).
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationDidBecomeActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onHandleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
+
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
     // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationDidChange) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
 
@@ -164,6 +173,13 @@ static NSDictionary* launchOptions = nil;
 
 - (void) onResume {
     [self debug:@"[onResume]"];
+    [self checkForFileToShare];
+}
+
+- (void) onHandleOpenURL:(NSNotification*)notification {
+    // Cordova posts this when the host app is launched (or re-foregrounded)
+    // via a URL scheme — including the scheme the ShareExt uses to wake us.
+    [self debug:@"[onHandleOpenURL]"];
     [self checkForFileToShare];
 }
 
