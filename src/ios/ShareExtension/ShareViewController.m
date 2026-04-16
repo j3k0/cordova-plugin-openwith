@@ -129,7 +129,7 @@
             [self debug:[NSString stringWithFormat:@"item provider = %@", itemProvider]];
             
             [itemProvider loadItemForTypeIdentifier:SHAREEXT_UNIFORM_TYPE_IDENTIFIER options:nil completionHandler: ^(id<NSSecureCoding> item, NSError *error) {
-                
+
                 NSData *data = [[NSData alloc] init];
                 if([(NSObject*)item isKindOfClass:[NSURL class]]) {
                     data = [NSData dataWithContentsOfURL:(NSURL*)item];
@@ -152,14 +152,40 @@
                 else {
                     uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
                 }
-                NSDictionary *dict = @{
+
+                // Spool the payload to a file in the App Group container
+                // instead of storing the raw bytes in NSUserDefaults.
+                // iOS 13+ caps CFPreferences/NSUserDefaults at 4MB per
+                // domain; anything larger throws and corrupts the suite
+                // until the app is force-quit. See #79.
+                NSString *dataPath = nil;
+                NSURL *containerURL = [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:SHAREEXT_GROUP_IDENTIFIER];
+                if (containerURL != nil && data.length > 0) {
+                    NSString *fileName = [[NSUUID UUID] UUIDString];
+                    NSURL *dataFileURL = [containerURL URLByAppendingPathComponent:fileName];
+                    NSError *writeError = nil;
+                    if ([data writeToURL:dataFileURL options:NSDataWritingAtomic error:&writeError]) {
+                        dataPath = [dataFileURL path];
+                    } else {
+                        [self debug:[NSString stringWithFormat:@"[didSelectPost] Failed to spool payload: %@", writeError]];
+                    }
+                }
+
+                NSMutableDictionary *dict = [@{
                     @"text": self.contentText,
                     @"backURL": self.backURL,
-                    @"data" : data,
                     @"uti": uti,
                     @"utis": utis,
                     @"name": suggestedName
-                };
+                } mutableCopy];
+                if (dataPath != nil) {
+                    dict[@"dataPath"] = dataPath;
+                } else {
+                    // Fall back to inline bytes for tiny payloads where
+                    // the container URL wasn't available. Keeps behavior
+                    // unchanged for the happy-path small-file case.
+                    dict[@"data"] = data;
+                }
                 [self.userDefaults setObject:dict forKey:@"image"];
                 [self.userDefaults synchronize];
 

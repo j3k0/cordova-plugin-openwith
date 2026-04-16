@@ -227,11 +227,30 @@ static NSDictionary* launchOptions = nil;
         return;
     }
     NSDictionary *dict = (NSDictionary*)object;
-    NSData *data = dict[@"data"];
     NSString *text = dict[@"text"];
     NSString *name = dict[@"name"];
     self.backURL = dict[@"backURL"];
     NSString *type = [self mimeTypeFromUti:dict[@"uti"]];
+
+    // Prefer the spooled file path written by ShareViewController.m. Fall
+    // back to inline @"data" for backwards compatibility with older
+    // ShareExt builds and for the small-payload path. See #79.
+    NSData *data = nil;
+    NSString *dataPath = dict[@"dataPath"];
+    if ([dataPath isKindOfClass:NSString.class] && dataPath.length > 0) {
+        NSURL *fileURL = [NSURL fileURLWithPath:dataPath];
+        NSError *readError = nil;
+        data = [NSData dataWithContentsOfURL:fileURL options:0 error:&readError];
+        if (data == nil) {
+            [self debug:[NSString stringWithFormat:@"[checkForFileToShare] Failed to read spooled payload: %@", readError]];
+        }
+        // Clean up the spooled file regardless of read success so we
+        // don't leak files in the shared container.
+        [[NSFileManager defaultManager] removeItemAtURL:fileURL error:nil];
+    } else {
+        data = dict[@"data"];
+    }
+
     if (![data isKindOfClass:NSData.class] || ![text isKindOfClass:NSString.class]) {
         [self debug:@"[checkForFileToShare] Data content is invalid"];
         return;
