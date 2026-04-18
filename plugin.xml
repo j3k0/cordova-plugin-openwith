@@ -43,8 +43,8 @@ SOFTWARE.
     <platform name="ios">
         <!-- defaults make these preferences optional, so `cordova plugin rm`
              works without the caller having to re-supply every variable. The
-             install-time hooks still pick up user-provided values via
-             --variable / package.json when present. See #89. -->
+             install-time hooks still pick up user-provided values via CLI
+             variables and package.json when present. See #89. -->
         <preference name="IOS_URL_SCHEME" default="openwith" />
         <preference name="IOS_UNIFORM_TYPE_IDENTIFIER" default="public.data" />
 
