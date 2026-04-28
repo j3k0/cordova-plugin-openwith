@@ -60,7 +60,6 @@
  */
 
 static NSDictionary* launchOptions = nil;
-bool initialized = false;
 
 /*
  * OpenWithPlugin definition
@@ -215,16 +214,6 @@ bool initialized = false;
     [self.userDefaults synchronize];
     NSObject *object = [self.userDefaults objectForKey:@"image"];
     if (object == nil) {
-        if (initialized) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"File size must be less than 4MB"
-                message:@"The file you have shared is too big. If you see this message again, please restart the app."
-                delegate:self
-                cancelButtonTitle:@"OK"
-                otherButtonTitles:nil];
-            [alert show];
-        }
-        initialized = true;
-        
         [self debug:@"[checkForFileToShare] Nothing to share"];
         return;
     }
@@ -238,15 +227,31 @@ bool initialized = false;
         return;
     }
     NSDictionary *dict = (NSDictionary*)object;
-    NSData *data = dict[@"data"];
+    
+    // Decode Base64 string back to NSData (iOS 26.4 compatibility)
+    id dataValue = dict[@"data"];
+    NSData *data = nil;
+    if ([dataValue isKindOfClass:[NSString class]]) {
+        // New format: Base64 string - decode it
+        data = [[NSData alloc] initWithBase64EncodedString:(NSString *)dataValue options:0];
+        [self debug:[NSString stringWithFormat:@"[checkForFileToShare] Decoded Base64 to NSData: %lu bytes", (unsigned long)data.length]];
+    } else if ([dataValue isKindOfClass:[NSData class]]) {
+        // Old format: still NSData (backward compatibility)
+        data = (NSData *)dataValue;
+        [self debug:[NSString stringWithFormat:@"[checkForFileToShare] Using direct NSData: %lu bytes", (unsigned long)data.length]];
+    }
+    
     NSString *text = dict[@"text"];
     NSString *name = dict[@"name"];
     self.backURL = dict[@"backURL"];
     NSString *type = [self mimeTypeFromUti:dict[@"uti"]];
-    if (![data isKindOfClass:NSData.class] || ![text isKindOfClass:NSString.class]) {
+    
+    // Validate that we have data and text
+    if (data == nil || data.length == 0 || ![text isKindOfClass:NSString.class]) {
         [self debug:@"[checkForFileToShare] Data content is invalid"];
         return;
     }
+    
     NSArray *utis = dict[@"utis"];
     if (utis == nil) {
         utis = @[];
