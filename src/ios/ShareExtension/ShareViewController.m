@@ -152,14 +152,22 @@
                 else {
                     uti = SHAREEXT_UNIFORM_TYPE_IDENTIFIER;
                 }
-                NSDictionary *dict = @{
-                    @"text": self.contentText,
-                    @"backURL": self.backURL,
-                    @"data" : data,
-                    @"uti": uti,
-                    @"utis": utis,
-                    @"name": suggestedName
-                };
+                // Convert NSData to Base64 string for iOS 26.4 compatibility
+                NSString *base64Data = data ? [data base64EncodedStringWithOptions:0] : @"";
+
+                // Use NSMutableDictionary to safely handle nil values
+                NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+                dict[@"text"] = self.contentText ?: @"";
+                dict[@"data"] = base64Data;
+                dict[@"uti"] = uti ?: @"";
+                dict[@"utis"] = utis ?: @[];
+                dict[@"name"] = suggestedName ?: @"";
+
+                // Only add backURL if it's not nil and not NSNull
+                if (self.backURL && ![self.backURL isEqual:[NSNull null]]) {
+                    dict[@"backURL"] = self.backURL;
+                }
+
                 [self.userDefaults setObject:dict forKey:@"image"];
                 [self.userDefaults synchronize];
 
@@ -246,8 +254,15 @@
 // This is called at the point where the Post dialog is about to be shown.
 // We use it to store the _hostBundleID
 - (void) willMoveToParentViewController: (UIViewController*)parent {
-    NSString *hostBundleID = [parent valueForKey:(@"_hostBundleID")];
-    self.backURL = [self backURLFromBundleID:hostBundleID];
+    @try {
+        NSString *hostBundleID = [parent valueForKey:(@"_hostBundleID")];
+        self.backURL = [self backURLFromBundleID:hostBundleID];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"[ShareViewController] Could not get hostBundleID (iOS version incompatibility): %@", exception);
+        // Fall back to default behavior
+        self.backURL = nil;
+    }
 }
 
 @end
